@@ -1,7 +1,7 @@
 {
   "name": "RosterClearedEvent",
   "type": "record",
-  "namespace": "io.tinklehq.events.roster.v1",
+  "namespace": "me.tinkle.events.roster.v1",
   "doc": "Published by roster-service when an entire roster is cleared in a single operation. Consumers should remove ALL contact references for the owner. Event type discriminator: 'roster_cleared'. Topic: outbox.roster.event. Aggregate: event.",
   "fields": [
     {

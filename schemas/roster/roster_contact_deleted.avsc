@@ -1,7 +1,7 @@
 {
   "name": "RosterContactDeletedEvent",
   "type": "record",
-  "namespace": "io.tinklehq.events.roster.v1",
+  "namespace": "me.tinkle.events.roster.v1",
   "doc": "Published by roster-service when a contact reference is removed. Fires only on the LAST row deletion for an (owner, contact) pair. Event type discriminator: 'roster_contact_deleted'. Topic: outbox.roster.event. Aggregate: event.",
   "fields": [
     {

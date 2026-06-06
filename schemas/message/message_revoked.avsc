@@ -1,7 +1,7 @@
 {
   "name": "MessageRevokedEvent",
   "type": "record",
-  "namespace": "io.tinklehq.events.message.v1",
+  "namespace": "me.tinkle.events.message.v1",
   "doc": "Published by chat-service when the original sender revokes a message for ALL recipients. Only the original sender can revoke. Event type discriminator: 'message_revoked'. Aggregate: event.",
   "fields": [
     {

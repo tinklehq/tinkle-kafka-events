@@ -94,7 +94,7 @@ without understanding the payload.
 {
   "type": "record",
   "name": "Envelope",
-  "namespace": "io.tinklehq.events.common.v1",
+  "namespace": "me.tinkle.events.common.v1",
   "fields": [
     { "name": "event_id",      "type": "string"  },            // UUIDv7
     { "name": "event_type",    "type": "string"  },            // e.g. "user_created"
@@ -132,8 +132,8 @@ See [`docs/compatibility.md`](docs/compatibility.md) for the full ruleset.
 Schemas are versioned in the **Avro namespace**, not the file name:
 
 ```
-io.tinklehq.events.<service>.<event_type>.v1
-io.tinklehq.events.<service>.<event_type>.v2   // breaking → new version under same subject
+me.tinkle.events.<service>.<event_type>.v1
+me.tinkle.events.<service>.<event_type>.v2   // breaking → new version under same subject
 ```
 
 Bumping `v1` → `v2` is a **breaking** change. The new version is

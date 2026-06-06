@@ -1,7 +1,7 @@
 {
   "name": "BotMessageEditedEvent",
   "type": "record",
-  "namespace": "io.tinklehq.events.bot.v1",
+  "namespace": "me.tinkle.events.bot.v1",
   "doc": "Published by bot-service when a bot edits a previously sent message. Event type discriminator: 'bot_message_edited'. Topic: outbox.bot.event. Aggregate: event.",
   "fields": [
     {

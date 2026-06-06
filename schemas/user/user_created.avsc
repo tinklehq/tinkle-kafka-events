@@ -1,7 +1,7 @@
 {
   "name": "UserCreatedEvent",
   "type": "record",
-  "namespace": "io.tinklehq.events.user.v1",
+  "namespace": "me.tinkle.events.user.v1",
   "doc": "Published by user-service when a new user account is created. Consumers should use this to initialise user-related projections (roster, presence, contacts, etc.). Event type discriminator: 'user_created'. Topic: outbox.user.event. Aggregate: event.",
   "fields": [
     {

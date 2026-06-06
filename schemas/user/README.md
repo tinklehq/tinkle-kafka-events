@@ -8,4 +8,4 @@ Avro event schemas for the user-service CDC topic.
 | `outbox.user.event` | `event`   | `user_soft_deleted`      | `user_soft_deleted.avsc` (`UserSoftDeletedEvent`) |
 | `outbox.user.event` | `event`   | `user_deleted`           | `user_deleted.avsc` (`UserDeletedEvent`)       |
 
-All schemas share the namespace `io.tinklehq.events.user.v1`.
+All schemas share the namespace `me.tinkle.events.user.v1`.

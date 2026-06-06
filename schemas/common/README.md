@@ -9,7 +9,7 @@ Shared types referenced from every other schema in this repo.
 | `enums_privacy_action.avsc` | `PrivacyRuleAction` enum (used by privacy rule events). |
 
 These enums live in `common/` for discovery but are namespaced under
-the privacy service (`io.tinklehq.events.privacy.v1.*`) intentionally:
+the privacy service (`me.tinkle.events.privacy.v1.*`) intentionally:
 they're logically owned by the privacy service's contract, not by a
 shared utility package. The placement in `common/` is purely
 organisational so the privacy schemas can reference them without a

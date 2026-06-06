@@ -11,7 +11,7 @@
 {
   "type": "record",
   "name": "Envelope",
-  "namespace": "io.tinklehq.events.common.v1",
+  "namespace": "me.tinkle.events.common.v1",
   "fields": [
     { "name": "event_id",       "type": "string"  },
     { "name": "event_type",     "type": "string"  },
@@ -56,9 +56,9 @@ event type:
 
 ```jsonc
 { "name": "payload", "type": [
-  "io.tinklehq.events.user.v1.UserCreatedEvent",
-  "io.tinklehq.events.user.v1.UserDeletedEvent",
-  "io.tinklehq.events.chat.v1.ChatCreatedEvent",
+  "me.tinkle.events.user.v1.UserCreatedEvent",
+  "me.tinkle.events.user.v1.UserDeletedEvent",
+  "me.tinkle.events.chat.v1.ChatCreatedEvent",
   ...
 ] }
 ```
@@ -87,7 +87,7 @@ that the Confluent docs themselves recommend for this case.
    * `aggregate_type`, `aggregate_id` = from the outbox table
    * `occurred_at`  = now()
    * `schema_version` = 1 (or the schema's major version)
-   * `payload_schema` = fully-qualified record name (e.g. `io.tinklehq.events.user.v1.UserCreatedEvent`)
+   * `payload_schema` = fully-qualified record name (e.g. `me.tinkle.events.user.v1.UserCreatedEvent`)
    * `traceparent`  = current span's traceparent, if any
    * `producer`     = the producing service name
    * `payload`      = the Avro-encoded concrete event

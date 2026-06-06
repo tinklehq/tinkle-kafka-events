@@ -1,7 +1,7 @@
 {
   "name": "PeerUserBlockedEvent",
   "type": "record",
-  "namespace": "io.tinklehq.events.peer.v1",
+  "namespace": "me.tinkle.events.peer.v1",
   "doc": "Published by chat-service (peer) when a user blocks another user. Consumers should drop any in-flight messages between the two users and add the target to the owner's blocklist projection. Event type discriminator: 'peer_blocked'. Topic: outbox.peer.event. Aggregate: event.",
   "fields": [
     {

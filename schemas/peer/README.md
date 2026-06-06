@@ -7,4 +7,4 @@ Avro event schemas for the chat-service peer-block CDC topic.
 | `outbox.peer.event`  | `event`   | `peer_blocked`           | `peer_user_blocked.avsc` (`PeerUserBlockedEvent`)   |
 | `outbox.peer.event`  | `event`   | `peer_unblocked`         | `peer_user_unblocked.avsc` (`PeerUserUnblockedEvent`) |
 
-All schemas share the namespace `io.tinklehq.events.peer.v1`.
+All schemas share the namespace `me.tinkle.events.peer.v1`.

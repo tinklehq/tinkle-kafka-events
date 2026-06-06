@@ -9,4 +9,4 @@ aggregate itself — see [`schemas/chat`](../chat) for that).
 | `event`   | `message_deleted`        | `message_deleted.avsc` (`MessageDeletedEvent`) |
 | `event`   | `message_revoked`        | `message_revoked.avsc` (`MessageRevokedEvent`) |
 
-All schemas share the namespace `io.tinklehq.events.message.v1`.
+All schemas share the namespace `me.tinkle.events.message.v1`.

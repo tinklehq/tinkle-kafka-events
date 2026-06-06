@@ -9,4 +9,4 @@ Avro event schemas for the bot-service CDC topic.
 | `outbox.bot.event`  | `event`   | `bot_message_deleted`    | `bot_message_deleted.avsc` (`BotMessageDeletedEvent`)   |
 | `outbox.bot.event`  | `event`   | `bot_callback_query`     | `bot_callback_query.avsc` (`BotCallbackQueryEvent`)     |
 
-All schemas share the namespace `io.tinklehq.events.bot.v1`.
+All schemas share the namespace `me.tinkle.events.bot.v1`.

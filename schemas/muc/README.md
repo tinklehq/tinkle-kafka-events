@@ -7,7 +7,7 @@ a downstream bot that a new message has been addressed to it.
 | ---------------------- | --------- | ------------------------ | --------------------------------------- |
 | `outbox.muc.message`   | `message` | `message_to_bot`         | `message_to_bot.avsc` (`MessageToBotEvent`) |
 
-All schemas share the namespace `io.tinklehq.events.muc.v1`.
+All schemas share the namespace `me.tinkle.events.muc.v1`.
 
 > **Why a dedicated topic?** Routing messages-to-bots to a separate
 > topic keeps the bot-service consumer decoupled from the high-volume

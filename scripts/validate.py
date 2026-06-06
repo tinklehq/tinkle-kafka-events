@@ -3,7 +3,7 @@
 
 Uses fastavro. Loads every schema, registers all defined names in a
 shared named-types map, and re-parses each schema so that cross-file
-references (e.g. `io.tinklehq.events.privacy.v1.PrivacyAllowValue`
+references (e.g. `me.tinkle.events.privacy.v1.PrivacyAllowValue`
 referenced from the privacy event records) resolve correctly.
 
 Run with: python3 scripts/validate.py
