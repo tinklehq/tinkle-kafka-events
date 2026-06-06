@@ -1,0 +1,18 @@
+{
+  "name": "UpsertPresencePrivacyEvent",
+  "type": "record",
+  "namespace": "io.tinklehq.events.privacy.v1",
+  "doc": "Published by privacy-service when a user's presence privacy setting is created or updated. Event type discriminator: 'upsert_presence_privacy'. Topic: outbox.privacy.presence. Aggregate: presence.",
+  "fields": [
+    {
+      "name": "user_id",
+      "type": "long",
+      "doc": "Snowflake ID of the setting owner."
+    },
+    {
+      "name": "allow_value",
+      "type": "io.tinklehq.events.privacy.v1.PrivacyAllowValue",
+      "doc": "New allow value for presence privacy."
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "name": "Envelope",
+  "type": "record",
+  "namespace": "io.tinklehq.events.common.v1",
+  "doc": "Standard Avro envelope wrapping every event published to a Tinkle Kafka topic. The envelope carries routing, ordering, tracing, and provenance metadata so that infrastructure (connectors, dead-letter routers, observability tools) can reason about the message without understanding the concrete payload. The actual event payload lives in the `payload` field, encoded according to the schema whose fully-qualified name is recorded in `event_type_schema`. Decoding the payload requires loading the referenced schema from the Schema Registry (or this repository).",
+  "fields": [
+    {
+      "name": "event_id",
+      "type": "string",
+      "doc": "Globally unique identifier for this event instance. UUIDv7 is RECOMMENDED (sortable, time-ordered). Used for idempotency, deduplication, and event-tracing."
+    },
+    {
+      "name": "event_type",
+      "type": "string",
+      "doc": "Discriminator for the concrete payload schema. Lowercase snake_case. Examples: 'user_created', 'peer_user_blocked', 'upsert_call_privacy'. One value per event type; see the per-service README under schemas/ for the full list."
+    },
+    {
+      "name": "aggregate_type",
+      "type": "string",
+      "doc": "Debezium outbox event router discriminator. Examples: 'event', 'message', 'call', 'presence'. Used as the Kafka topic routing key together with the topic constant."
+    },
+    {
+      "name": "aggregate_id",
+      "type": "string",
+      "doc": "Aggregate identifier — the value used as the Kafka message key. All events with the same aggregate_id are guaranteed to land on the same partition, preserving per-entity ordering. For example, the owner_user_id for a roster event, or the chat_id for a chat event."
+    },
+    {
+      "name": "occurred_at",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      },
+      "doc": "Wall-clock instant at which the event was produced, encoded as Unix epoch milliseconds. Use this for observability; for canonical event time use the payload's own timestamp field."
+    },
+    {
+      "name": "schema_version",
+      "type": "int",
+      "doc": "Version of the envelope schema. Currently always 1. Bumped only on breaking changes to the envelope itself (extremely rare)."
+    },
+    {
+      "name": "payload_schema",
+      "type": "string",
+      "doc": "Fully-qualified name of the Avro record contained in `payload` (e.g. 'io.tinklehq.events.user.v1.UserCreatedEvent'). This allows consumers to look up the exact schema from Schema Registry without consulting event_type."
+    },
+    {
+      "name": "traceparent",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null,
+      "doc": "W3C Trace Context 'traceparent' header. Populated by the producer if W3C tracing is enabled. Carried verbatim through Kafka for end-to-end distributed tracing."
+    },
+    {
+      "name": "producer",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null,
+      "doc": "Logical producer name (e.g. 'user-service', 'roster-service'). Mainly useful for log/metric attribution when a single topic hosts events from multiple producers."
+    },
+    {
+      "name": "payload",
+      "type": "bytes",
+      "doc": "Avro-encoded concrete event. Decode using the schema named in `payload_schema`."
+    }
+  ]
+}

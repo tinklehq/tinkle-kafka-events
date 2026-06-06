@@ -12,22 +12,23 @@
 
 ## What is this?
 
-`tinkle-kafka-events` is the **single source of truth** for the event schemas that
-flow through [Tinkle Messenger](https://github.com/tinklehq)'s internal Kafka
-topics. Every domain event published by an upstream service and consumed by one
-or more downstream services is defined here as an **Apache Avro `.avsc`** file.
+`tinkle-kafka-events` is the **single source of truth** for the event
+schemas that flow through Tinkle Messenger's internal Kafka topics.
+Every domain event produced by a service and consumed by one or more
+downstream services is defined here as an **Apache Avro `.avsc` file**.
 
 The repository exists to:
 
-1. **Eliminate drift.** Producers and consumers evolve from a shared contract
-   instead of hand-copying `.proto` definitions.
-2. **Enable schema-registry workflows.** Every `.avsc` file is registered with
-   a Schema Registry (Confluent-compatible) so compatibility is checked at
-   publish time, not at runtime.
-3. **Support polyglot clients.** Avro has first-class code generation for Go
-   (`avrogen`), Java, Python, Kotlin, TypeScript, Rust, and Elixir.
-4. **Provide a public, auditable record.** This repo is the human-readable
-   "API documentation" for our internal event bus.
+1. **Centralize the contract.** All event definitions live in one
+   place, with one review process and one release cadence.
+2. **Enable schema-registry workflows.** Every `.avsc` file is
+   registered with a Schema Registry (Confluent-compatible) so
+   compatibility is checked at publish time, not at runtime.
+3. **Support polyglot clients.** Avro has first-class code generation
+   for Go (`avrogen`), Java, Python, Kotlin, TypeScript, Rust, and
+   Elixir.
+4. **Provide a public, auditable record.** This repo is the
+   human-readable "API documentation" for the internal event bus.
 
 ## Why Avro?
 
@@ -37,18 +38,10 @@ The repository exists to:
 | Schema enforcement          | Mandatory at publish time via Schema Registry      |
 | Forward / backward compat   | Built into the spec — enforced automatically       |
 | Code generation             | First-class for Go, Java, Python, Kotlin, etc.     |
-| Polyglot consumers          | Decoupled from any one IDL (Protobuf, Thrift, …)   |
+| Polyglot consumers          | Decoupled from any one IDL                         |
 | Human readability           | Schemas are JSON — diff-friendly, PR-friendly      |
 
-> The existing `proto/internal/outbox/v1/outbox.proto` definitions remain the
-> authoritative Go source of truth for now. This repo **mirrors** them in Avro
-> so that non-Go consumers (Elixir chat-node, Java/Kotlin mobile gateways,
-> Python analytics) can deserialize events without re-deriving the contract.
-
 ## Layout
-
-This repository's contents will land on a feature branch once the initial
-schemas are authored. The planned directory layout is:
 
 ```
 tinkle-kafka-events/
@@ -56,13 +49,10 @@ tinkle-kafka-events/
 ├── docs/
 │   ├── architecture.md                # event-flow diagram
 │   ├── envelope.md                    # envelope pattern rationale
-│   ├── compatibility.md              # BACKWARD / FORWARD / FULL policy
+│   ├── compatibility.md               # BACKWARD / FORWARD / FULL policy
 │   └── subject-naming.md              # schema-registry subject conventions
 ├── schemas/
 │   ├── common/                        # shared types (envelope, enums)
-│   │   ├── envelope.avsc
-│   │   ├── enums.avsc
-│   │   └── snowflake.avsc
 │   ├── user/                          # user-service events
 │   ├── chat/                          # chat/muc-service events
 │   ├── roster/                        # roster-service events
@@ -72,39 +62,33 @@ tinkle-kafka-events/
 │   ├── muc/                           # muc-to-bot routing events
 │   └── bot/                           # bot-service events
 ├── scripts/
-│   └── validate.sh                    # avro-tools compatibility check
+│   └── validate.sh                    # fastavro-based Avro schema validator
 └── .github/
     └── workflows/
-        └── compatibility.yml          # CI: register + diff schemas
+        └── schema-compatibility.yml   # CI: validate schemas + register against staging registry
 ```
 
 ## Services & Topics Covered
 
-The schemas in this repo cover the CDC events consumed via the
-`cdcevent` library in
-[`tinklehq/tinkle-server`](https://github.com/tinklehq/tinkle-server):
+See each `schemas/<service>/README.md` for the per-event breakdown.
+At a glance:
 
-| Producer service | Kafka topic                       | Aggregate   | Events                                                                       |
-| ---------------- | --------------------------------- | ----------- | ---------------------------------------------------------------------------- |
-| `user`           | `outbox.user.event`               | `event`     | `UserCreatedEvent`, `UserDeletedEvent`                                        |
-| `chat` (muc)     | `outbox.chat.event`               | `event`     | `ChatCreatedEvent`, `ChatDeletedEvent`                                        |
-| `roster`         | `outbox.roster.event`             | `event`     | `RosterContactAddedEvent`, `RosterContactDeletedEvent`, `RosterClearedEvent`, `RosterContactBatchAddedEvent`, `RosterContactBatchDeletedEvent`, `MutualContactEstablishedEvent`, `MutualContactBrokenEvent` |
-| `chat` (peer)    | `outbox.peer.event`               | `event`     | `PeerUserBlockedEvent`, `PeerUserUnblockedEvent`                              |
-| `privacy`        | `outbox.privacy.call`             | `call`      | `UpsertCallPrivacyEvent`, `UpsertCallPrivacyRuleEvent`, `RemoveCallPrivacyRuleEvent` |
-| `privacy`        | `outbox.privacy.presence`         | `presence`  | `UpsertPresencePrivacyEvent`, `UpsertPresencePrivacyRuleEvent`, `RemovePresencePrivacyRuleEvent` |
-| `privacy`        | `outbox.privacy.phone_number`     | `phone_number` | `UpsertPhoneNumberPrivacyEvent`, `UpsertPhoneNumberPrivacyRuleEvent`, `RemovePhoneNumberPrivacyRuleEvent` |
-| `privacy`        | `outbox.privacy.about`            | `about`     | `UpsertAboutPrivacyEvent`, `UpsertAboutPrivacyRuleEvent`, `RemoveAboutPrivacyRuleEvent` |
-| `privacy`        | `outbox.privacy.profile_photo`    | `profile_photo` | `UpsertProfilePhotoPrivacyEvent`, `UpsertProfilePhotoPrivacyRuleEvent`, `RemoveProfilePhotoPrivacyRuleEvent` |
-| `privacy`        | `outbox.privacy.chat_invite`      | `chat_invite` | `UpsertChatInvitePrivacyEvent`, `UpsertChatInvitePrivacyRuleEvent`, `RemoveChatInvitePrivacyRuleEvent` |
-| `muc`            | `outbox.muc.message`              | `message`   | `MessageToBot`                                                                |
-| `bot`            | `outbox.bot.event`                | `event`     | `BotMessageCreated`, `BotMessageEdited`, `BotMessageDeleted`, `BotCallbackQuery` |
-| `chat`           | *(protobuf-defined)*              |             | `MessageCreatedEvent`, `MessageDeletedEvent`, `MessageRevokedEvent`            |
+| Producer       | Topic(s)                                   |
+| -------------- | ------------------------------------------ |
+| `user`         | `outbox.user.event`                        |
+| `chat` (muc)   | `outbox.chat.event`                        |
+| `roster`       | `outbox.roster.event`                      |
+| `chat` (peer)  | `outbox.peer.event`                        |
+| `privacy`      | `outbox.privacy.<kind>` for 6 kinds        |
+| `chat` (msg)   | (see `schemas/message/README.md`)          |
+| `muc`          | `outbox.muc.message`                       |
+| `bot`          | `outbox.bot.event`                         |
 
-## Envelope design (preview)
+## Envelope design
 
-Every Avro record published to Kafka follows the **envelope pattern** so that
-infrastructure can route, log, trace, and replay events without understanding
-the payload.
+Every Avro record published to Kafka follows the **envelope pattern**
+so that infrastructure can route, log, trace, and replay events
+without understanding the payload.
 
 ```jsonc
 {
@@ -118,14 +102,16 @@ the payload.
     { "name": "aggregate_id",  "type": "string"  },            // Kafka key
     { "name": "occurred_at",   "type": { "type": "long", "logicalType": "timestamp-millis" } },
     { "name": "schema_version","type": "int"     },            // 1
+    { "name": "payload_schema","type": "string"  },            // FQN of payload record
     { "name": "traceparent",   "type": ["null", "string"], "default": null },
+    { "name": "producer",      "type": ["null", "string"], "default": null },
     { "name": "payload",       "type": "bytes"   }             // Avro-encoded concrete event
   ]
 }
 ```
 
-The full envelope schema, enum definitions, and per-service event payloads
-land in the `feature/initial-avro-schemas` branch (coming next).
+See [`docs/envelope.md`](docs/envelope.md) for the full producer and
+consumer flow.
 
 ## Compatibility policy
 
@@ -136,10 +122,10 @@ All schemas in this repo MUST be evolved under **BACKWARD** compatibility
 * Removing a field → MUST only remove fields that have a `default`.
 * Changing a field's type → MUST be a safe promotion (`int` → `long`,
   `float` → `double`).
-* Changing an enum → Adding a new symbol is allowed; renaming or reordering
-  is not.
+* Changing an enum → Adding a new symbol is allowed; renaming or
+  reordering is not.
 
-See `docs/compatibility.md` for the full ruleset.
+See [`docs/compatibility.md`](docs/compatibility.md) for the full ruleset.
 
 ## Versioning
 
@@ -147,32 +133,22 @@ Schemas are versioned in the **Avro namespace**, not the file name:
 
 ```
 io.tinklehq.events.<service>.<event_type>.v1
-io.tinklehq.events.<service>.<event_type>.v2   // breaking → new subject
+io.tinklehq.events.<service>.<event_type>.v2   // breaking → new version under same subject
 ```
 
-Bumping `v1` → `v2` is a **breaking** change. A breaking change creates a
-new Schema Registry subject and the old subject is frozen (still readable
-by old consumers).
+Bumping `v1` → `v2` is a **breaking** change. The new version is
+registered under the same subject, the old version is frozen.
 
 ## Contributing
 
 1. Branch from `main` using a `feature/<short-desc>` naming convention.
-2. Add or modify `.avsc` files in the appropriate `schemas/<service>/` directory.
-3. Run `scripts/validate.sh` locally to confirm syntactic validity.
-4. Open a PR — CI will register the candidate schema against Schema Registry
-   and reject the change if it is incompatible with the latest version.
+2. Add or modify `.avsc` files in the appropriate `schemas/<service>/`
+   directory.
+3. Run `./scripts/validate.sh` locally to confirm syntactic validity.
+4. Open a PR — CI validates the schemas and (when configured) registers
+   the candidate schemas against the staging Schema Registry, failing
+   the PR on a `409 Conflict` (incompatibility).
 5. After approval, merge via squash-commit. CI promotes the new version.
-
-## Related repositories
-
-* [`tinklehq/tinkle-server`](https://github.com/tinklehq/tinkle-server) — the
-  Go microservices that produce and consume these events. `src/libs/cdcevent`
-  holds the Go-side discriminator constants and topic names.
-* [`tinklehq/outbox-proto`](https://github.com/tinklehq/outbox-proto) — the
-  **Protobuf** mirror of these events for Go-only consumers. Will be
-  deprecated in favour of this Avro repo once adoption is complete.
-* [`tinklehq/tinkle-proto`](https://github.com/tinklehq/tinkle-proto) — the
-  **public** client-facing gRPC API contracts (not internal CDC events).
 
 ## License
 

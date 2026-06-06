@@ -1,0 +1,26 @@
+{
+  "name": "MutualContactEstablishedEvent",
+  "type": "record",
+  "namespace": "io.tinklehq.events.roster.v1",
+  "doc": "Published by roster-service when a previously one-directional contact relationship becomes mutual (both users have added each other). Event type discriminator: 'roster_mutual_contact_established'. Topic: outbox.roster.event. Aggregate: event.",
+  "fields": [
+    {
+      "name": "owner_user_id",
+      "type": "long",
+      "doc": "Snowflake ID of the roster owner (the user on whose behalf this event is emitted; both directions will fire one event each)."
+    },
+    {
+      "name": "contact_user_id",
+      "type": "long",
+      "doc": "Snowflake ID of the contact that is now mutual."
+    },
+    {
+      "name": "created_at",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      },
+      "doc": "Wall-clock instant at which the mutual relationship was established."
+    }
+  ]
+}

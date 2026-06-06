@@ -1,0 +1,26 @@
+{
+  "name": "PeerUserUnblockedEvent",
+  "type": "record",
+  "namespace": "io.tinklehq.events.peer.v1",
+  "doc": "Published by chat-service (peer) when a user unblocks another user. Consumers should remove the target from the owner's blocklist projection and resume normal message delivery. Event type discriminator: 'peer_unblocked'. Topic: outbox.peer.event. Aggregate: event.",
+  "fields": [
+    {
+      "name": "owner_user_id",
+      "type": "long",
+      "doc": "Snowflake ID of the user who initiated the unblock."
+    },
+    {
+      "name": "target_user_id",
+      "type": "long",
+      "doc": "Snowflake ID of the user being unblocked."
+    },
+    {
+      "name": "created_at",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      },
+      "doc": "Wall-clock instant at which the unblock occurred."
+    }
+  ]
+}
