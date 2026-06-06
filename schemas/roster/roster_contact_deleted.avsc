@@ -1,0 +1,26 @@
+{
+  "type": "record",
+  "name": "RosterContactDeletedEvent",
+  "namespace": "io.tinklehq.events.roster.v1",
+  "doc": "Published by roster-service when a contact reference is removed. Fires only on the LAST row deletion for an (owner, contact) pair. Event type discriminator: 'roster_contact_deleted'. Topic: outbox.roster.event. Aggregate: event.",
+  "fields": [
+    {
+      "name": "owner_user_id",
+      "type": "long",
+      "doc": "Snowflake ID of the roster owner (the user who removed the contact)."
+    },
+    {
+      "name": "contact_user_id",
+      "type": "long",
+      "doc": "Snowflake ID of the contact that was removed."
+    },
+    {
+      "name": "created_at",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      },
+      "doc": "Wall-clock instant at which the contact reference was removed."
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "type": "record",
+  "name": "MutualContactBrokenEvent",
+  "namespace": "io.tinklehq.events.roster.v1",
+  "doc": "Emitted by roster-service when a previously mutual contact relationship becomes one-directional again (one party removed the other). Event type discriminator: 'roster_mutual_contact_broken'. Topic: outbox.roster.event. Aggregate: event.",
+  "fields": [
+    {
+      "name": "owner_user_id",
+      "type": "long",
+      "doc": "Snowflake ID of the roster owner."
+    },
+    {
+      "name": "contact_user_id",
+      "type": "long",
+      "doc": "Snowflake ID of the contact that is no longer mutual."
+    },
+    {
+      "name": "created_at",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      },
+      "doc": "Wall-clock instant at which the mutual relationship was broken."
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "type": "record",
+  "name": "RosterContactBatchDeletedEvent",
+  "namespace": "io.tinklehq.events.roster.v1",
+  "doc": "Published by roster-service when multiple contacts are removed in a single bulk operation (ResetRoster). Contains ONLY contacts that had a resolved contact_user_id (> 0). Scoped to a single owner — one event per owner per batch operation. Event type discriminator: 'roster_contact_batch_deleted'. Topic: outbox.roster.event. Aggregate: event.",
+  "fields": [
+    {
+      "name": "owner_user_id",
+      "type": "long",
+      "doc": "Snowflake ID of the roster owner."
+    },
+    {
+      "name": "contact_user_ids",
+      "type": {
+        "type": "array",
+        "items": "long"
+      },
+      "doc": "Snowflake IDs of the contacts that were removed in this batch."
+    },
+    {
+      "name": "created_at",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      },
+      "doc": "Wall-clock instant at which the batch removal completed."
+    }
+  ]
+}
