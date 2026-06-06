@@ -27,7 +27,7 @@
     {
       "name": "payload",
       "type": "bytes",
-      "doc": "Raw message body encoded using the message_type-specific Protobuf. The bot-service decodes this from internal Tinkle message types; downstream consumers should use the original chat-message Protobuf schema."
+      "doc": "Raw message body. Encoding and schema are determined by `message_type`; consumers dispatch on the type tag before decoding."
     },
     {
       "name": "reply_to_message_id",

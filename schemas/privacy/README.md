@@ -1,12 +1,12 @@
 # tinkle-kafka-events/schemas/privacy
 
-CDC events produced by `tinklehq/tinkle-server` `privacy-service`.
+Avro event schemas for the privacy-service CDC topics.
 
 Privacy events follow a **per-kind topic** topology: each privacy kind
 (call, presence, phone_number, about, profile_photo, chat_invite) gets
-its own Kafka topic and its own outbox table. This is the most
-high-volume CDC stream in the system — splitting by kind lets consumers
-subscribe to only the kinds they care about.
+its own Kafka topic. This is the highest-volume CDC stream in the
+system — splitting by kind lets consumers subscribe to only the kinds
+they care about.
 
 | Privacy kind      | Kafka topic                       | Aggregate       | Operations                | Schemas (per op)                                                                              |
 | ----------------- | --------------------------------- | --------------- | ------------------------- | --------------------------------------------------------------------------------------------- |
@@ -21,23 +21,3 @@ All schemas share the namespace `io.tinklehq.events.privacy.v1`. The
 shared `PrivacyAllowValue` and `PrivacyRuleAction` enums are defined in
 [`schemas/common/enums.avsc`](../common/enums.avsc) and
 [`schemas/common/enums_privacy_action.avsc`](../common/enums_privacy_action.avsc).
-
-The Protobuf mirror is in `proto/internal/outbox/v1/outbox.proto`
-(18 messages, 3 per kind). The Go-side constants are in
-`src/libs/cdcevent/cdcevent.go`:
-
-```go
-// Per-kind aggregate types
-PrivacyAggregateCall         = "call"
-PrivacyAggregatePresence     = "presence"
-PrivacyAggregatePhoneNumber  = "phone_number"
-PrivacyAggregateAbout        = "about"
-PrivacyAggregateProfilePhoto = "profile_photo"
-PrivacyAggregateChatInvite   = "chat_invite"
-
-// Per-kind event types
-PrivacyUpsertCallSetting    = "upsert_call_privacy"
-PrivacyUpsertCallRule       = "upsert_call_privacy_rule"
-PrivacyRemoveCallRule       = "remove_call_privacy_rule"
-// ... and the same triple for the other 5 kinds
-```

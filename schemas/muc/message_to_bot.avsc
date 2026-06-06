@@ -32,7 +32,7 @@
     {
       "name": "payload",
       "type": "bytes",
-      "doc": "Raw, type-specific message body encoded using the message_type-specific Protobuf. The bot-service decodes this based on message_type."
+      "doc": "Raw, type-specific message body. Encoding and schema are determined by `message_type`; consumers dispatch on the type tag before decoding."
     },
     {
       "name": "created_at",

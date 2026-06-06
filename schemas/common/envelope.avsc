@@ -12,7 +12,7 @@
     {
       "name": "event_type",
       "type": "string",
-      "doc": "Discriminator for the concrete payload schema. Lowercase snake_case. Examples: 'user_created', 'peer_user_blocked', 'upsert_call_privacy'. Mirrors the constants defined in `src/libs/cdcevent/cdcevent.go` in tinklehq/tinkle-server."
+      "doc": "Discriminator for the concrete payload schema. Lowercase snake_case. Examples: 'user_created', 'peer_user_blocked', 'upsert_call_privacy'. One value per event type; see the per-service README under schemas/ for the full list."
     },
     {
       "name": "aggregate_type",

@@ -27,7 +27,7 @@
     {
       "name": "payload",
       "type": "bytes",
-      "doc": "Updated message body encoded using the message_type-specific Protobuf."
+      "doc": "Updated message body. Encoding and schema are determined by `message_type`; consumers dispatch on the type tag before decoding."
     },
     {
       "name": "edited_at",

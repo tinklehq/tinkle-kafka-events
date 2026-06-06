@@ -13,13 +13,13 @@
 |  Business logic      |--->|  outbox table       |--->|  Kafka topic  |--->|  CDC consumer        |
 |  + outbox insert     |    |  (same TX)          |    |               |    |  + handler           |
 +----------------------+    +---------------------+    +---------------+    +----------------------+
-         |                                                                    ^
-         | produces                                                           | validates against
-         v                                                                    |
-   +------------------------------------------------------------------+
-   |                  tinkle-kafka-events  (this repository)          |
-   |   Apache Avro `.avsc` schemas registered with a Schema Registry  |
-   +------------------------------------------------------------------+
+          |                                                                    ^
+          | produces                                                           | validates against
+          v                                                                    |
+    +------------------------------------------------------------------+
+    |                  tinkle-kafka-events  (this repository)          |
+    |   Apache Avro `.avsc` schemas registered with a Schema Registry  |
+    +------------------------------------------------------------------+
 ```
 
 ## Data flow
@@ -73,13 +73,10 @@ concrete schema by `event_type` and decodes accordingly.
 
 > See `subject-naming.md` for the full rationale.
 
-## Why mirror Protobuf in Avro?
+## What this repo is
 
-The existing `proto/internal/outbox/v1/outbox.proto` file in
-`tinklehq/tinkle-server` is the **authoritative Go contract** — it is
-compiled into Go structs that the Go services use directly.
-
-This Avro repository exists to provide:
+This Avro repository is the **authoritative wire contract** for every
+Kafka CDC event in the Tinkle stack. It provides:
 
 * A **polyglot** contract for non-Go consumers (Elixir chat-node,
   Java/Kotlin mobile gateways, Python analytics, future Rust services).
@@ -88,6 +85,7 @@ This Avro repository exists to provide:
 * A **public, audit-friendly** record of the data contract — Avro
   schemas are JSON, easy to diff and review in PRs.
 
-Both contracts MUST be kept in sync. CI in
-`tinklehq/tinkle-server` should fail if the Avro and Protobuf
-definitions drift (see follow-up work).
+The repo is deliberately standalone: nothing here references or
+depends on any other repository. Each `.avsc` is a self-contained
+contract, registered with Schema Registry and consumed by any service
+that wants to read or write the corresponding topic.

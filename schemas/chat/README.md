@@ -1,7 +1,7 @@
 # tinkle-kafka-events/schemas/chat
 
-CDC events produced by `tinklehq/tinkle-server` `chat-service` (MUC
-back-end) for chat lifecycle management.
+Avro event schemas for the chat-service CDC topic (MUC chat-aggregate
+lifecycle).
 
 | Kafka topic         | Aggregate | Event type discriminator | Schema                                |
 | ------------------- | --------- | ------------------------ | ------------------------------------- |

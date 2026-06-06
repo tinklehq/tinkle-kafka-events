@@ -1,8 +1,7 @@
 # tinkle-kafka-events/schemas/muc
 
-CDC events produced by `tinklehq/tinkle-server` `muc-service` for
-**muc-to-bot routing** — i.e. events that signal a downstream bot that
-a new message has been addressed to it.
+Avro event schemas for the muc-to-bot routing CDC topic. Events signal
+a downstream bot that a new message has been addressed to it.
 
 | Kafka topic            | Aggregate | Event type discriminator | Schema                                  |
 | ---------------------- | --------- | ------------------------ | --------------------------------------- |
@@ -14,14 +13,3 @@ All schemas share the namespace `io.tinklehq.events.muc.v1`.
 > topic keeps the bot-service consumer decoupled from the high-volume
 > general chat-event stream and lets the bot-service scale
 > independently.
-
-The Go-side constant is in `src/libs/cdcevent/cdcevent.go`:
-
-```go
-MucMessageAggregateType = "message"
-MessageToBot            = "message_to_bot"
-```
-
-The Protobuf mirror is still TODO in the Go service (the bot-service
-in-memory domain struct `InboundBotMessagePayload` is defined in
-`src/services/bot/internal/domain/events.go`).

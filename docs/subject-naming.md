@@ -62,37 +62,38 @@ Step 4 is what makes the envelope pattern robust against union
 encoding: consumers never need to know the union, they just look up
 by name.
 
-## Migration paths
+## Operational workflows
 
-### From Protobuf to Avro
+### Adding a new event type to an existing topic
 
-The existing `outbox.user.event` topic is currently populated with
-JSONB envelopes wrapping base64-encoded Protobuf messages:
-
-```json
-{ "event_type": "user_created", "data": "CAEQAQ==", "traceparent": "..." }
-```
-
-When migrating to Avro:
-
-1. Register the Envelope schema against `outbox.user.event-value` in
-   the staging registry.
-2. Dual-write producers emit BOTH the Protobuf (existing code path) AND
-   the Avro envelope (new code path), discriminated by a magic byte in
-   a Kafka header.
-3. Consumers learn to detect the magic byte and dispatch.
-4. Once all consumers are migrated, remove the Protobuf code path.
-5. Subject history is preserved — old Protobuf events remain readable
-   for any consumer that needs to backfill.
+1. Add the new `.avsc` under the appropriate `schemas/<service>/`
+   directory.
+2. Run `./scripts/validate.sh` locally to confirm it parses.
+3. Open a PR. CI registers the candidate schema against the staging
+   Schema Registry; if it's incompatible with the latest version the
+   PR fails.
 
 ### Adding a new topic
 
-1. Author the Envelope usage in this repo (most are already in place).
-2. Author any **new** event schemas in the appropriate
+1. Pick a topic name (e.g. `outbox.<service>.<aggregate>`).
+2. Author the per-event `.avsc` files under a new
    `schemas/<service>/` directory.
 3. Register the Envelope schema under `<topic>-value` in the
    registry. This will auto-create the subject.
-4. Update `cdcevent` topic constants in
-   `tinklehq/tinkle-server/src/libs/cdcevent/cdcevent.go` to point
-   to the new topic.
-5. Update producer code to use the new envelope-based helper.
+4. Update producer and consumer code to use the new topic.
+
+### Bumping an event to a breaking new version
+
+1. Bump the schema's namespace to `v2`:
+   `io.tinklehq.events.user.v2.UserCreatedEvent`.
+2. Register it under the **same subject** as v1
+   (`outbox.user.event-value`); Schema Registry will store both
+   versions.
+3. Producers dual-write to **both** `v1` and `v2` for one release
+   window.
+4. Consumers migrate to `v2`.
+5. Producers stop dual-writing.
+6. The `v1` subject is **frozen** (still readable by old consumers for
+   replay), but not evolved further.
+7. After a defined grace period (typically one quarter), the `v1`
+   version of the subject is marked `deleted: true` in the registry.
