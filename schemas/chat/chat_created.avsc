@@ -1,6 +1,6 @@
 {
-  "type": "record",
   "name": "ChatCreatedEvent",
+  "type": "record",
   "namespace": "io.tinklehq.events.chat.v1",
   "doc": "Published by chat-service (muc) when a new chat (1:1, group, or broadcast) is created. Event type discriminator: 'chat_created'. Topic: outbox.chat.event. Aggregate: event.",
   "fields": [

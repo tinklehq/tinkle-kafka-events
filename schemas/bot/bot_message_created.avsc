@@ -1,6 +1,6 @@
 {
-  "type": "record",
   "name": "BotMessageCreatedEvent",
+  "type": "record",
   "namespace": "io.tinklehq.events.bot.v1",
   "doc": "Published by bot-service when a bot sends a new message (via webhook reply, sendMessage RPC, etc.). Consumers (typically notification / search) should use this to project bot-authored messages. Event type discriminator: 'bot_message_created'. Topic: outbox.bot.event. Aggregate: event.",
   "fields": [

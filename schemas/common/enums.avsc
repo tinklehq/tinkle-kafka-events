@@ -1,6 +1,6 @@
 {
-  "type": "enum",
   "name": "PrivacyAllowValue",
+  "type": "enum",
   "namespace": "io.tinklehq.events.privacy.v1",
   "doc": "Visibility scope of a user's privacy setting for a given kind (call, presence, phone_number, about, profile_photo, chat_invite). Owned by the privacy-service event contract; lives under schemas/common/ only so other schemas can reference it without circular import.",
   "symbols": [

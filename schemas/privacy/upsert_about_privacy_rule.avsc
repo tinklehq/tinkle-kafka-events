@@ -1,6 +1,6 @@
 {
-  "type": "record",
   "name": "UpsertAboutPrivacyRuleEvent",
+  "type": "record",
   "namespace": "io.tinklehq.events.privacy.v1",
   "doc": "Published by privacy-service when an 'about' privacy rule override is created or updated. Event type discriminator: 'upsert_about_privacy_rule'. Topic: outbox.privacy.about. Aggregate: about.",
   "fields": [

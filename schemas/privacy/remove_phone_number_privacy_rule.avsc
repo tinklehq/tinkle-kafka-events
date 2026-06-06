@@ -1,6 +1,6 @@
 {
-  "type": "record",
   "name": "RemovePhoneNumberPrivacyRuleEvent",
+  "type": "record",
   "namespace": "io.tinklehq.events.privacy.v1",
   "doc": "Published by privacy-service when a phone number privacy rule override is deleted. Event type discriminator: 'remove_phone_number_privacy_rule'. Topic: outbox.privacy.phone_number. Aggregate: phone_number.",
   "fields": [

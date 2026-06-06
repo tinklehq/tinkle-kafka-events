@@ -1,6 +1,6 @@
 {
-  "type": "record",
   "name": "UpsertAboutPrivacyEvent",
+  "type": "record",
   "namespace": "io.tinklehq.events.privacy.v1",
   "doc": "Published by privacy-service when a user's 'about' privacy setting is created or updated. Event type discriminator: 'upsert_about_privacy'. Topic: outbox.privacy.about. Aggregate: about.",
   "fields": [

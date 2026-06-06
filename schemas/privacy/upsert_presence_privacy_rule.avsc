@@ -1,6 +1,6 @@
 {
-  "type": "record",
   "name": "UpsertPresencePrivacyRuleEvent",
+  "type": "record",
   "namespace": "io.tinklehq.events.privacy.v1",
   "doc": "Published by privacy-service when a presence privacy rule override is created or updated. Event type discriminator: 'upsert_presence_privacy_rule'. Topic: outbox.privacy.presence. Aggregate: presence.",
   "fields": [

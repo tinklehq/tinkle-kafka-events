@@ -1,6 +1,6 @@
 {
-  "type": "record",
   "name": "MessageDeletedEvent",
+  "type": "record",
   "namespace": "io.tinklehq.events.message.v1",
   "doc": "Published by chat-service when a user deletes a message for themselves. The target identifier is stable and is NOT rewritten for per-user deletion. Event type discriminator: 'message_deleted'. Aggregate: event.",
   "fields": [

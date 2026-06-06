@@ -1,6 +1,6 @@
 {
-  "type": "record",
   "name": "MessageCreatedEvent",
+  "type": "record",
   "namespace": "io.tinklehq.events.message.v1",
   "doc": "Published by chat-service when a message is successfully persisted. Consumers should use this to update message-related projections (search index, notification fan-out, unread counters, etc.). Event type discriminator: 'message_created'. Aggregate: event.",
   "fields": [
