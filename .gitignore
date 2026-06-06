@@ -21,3 +21,9 @@ Thumbs.db
 build/
 dist/
 gen/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
