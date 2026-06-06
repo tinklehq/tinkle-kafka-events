@@ -1,7 +1,7 @@
 {
   "name": "RemoveAboutPrivacyRuleEvent",
   "type": "record",
-  "namespace": "io.tinklehq.events.privacy.v1",
+  "namespace": "me.tinkle.events.privacy.v1",
   "doc": "Published by privacy-service when an 'about' privacy rule override is deleted. Event type discriminator: 'remove_about_privacy_rule'. Topic: outbox.privacy.about. Aggregate: about.",
   "fields": [
     {

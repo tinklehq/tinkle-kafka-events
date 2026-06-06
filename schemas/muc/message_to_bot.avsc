@@ -1,7 +1,7 @@
 {
   "name": "MessageToBotEvent",
   "type": "record",
-  "namespace": "io.tinklehq.events.muc.v1",
+  "namespace": "me.tinkle.events.muc.v1",
   "doc": "Published by muc-service when a message targeting a bot is persisted. Routed by Debezium to the dedicated `outbox.muc.message` topic so that the bot-service consumer (and only that consumer) is triggered. Event type discriminator: 'message_to_bot'. Topic: outbox.muc.message. Aggregate: message.",
   "fields": [
     {

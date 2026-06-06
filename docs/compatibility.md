@@ -84,7 +84,7 @@ in the enum, not its name. Reordering silently corrupts data.
 When a non-backward-compatible change is unavoidable:
 
 1. Bump the schema's namespace to `v2`:
-   `io.tinklehq.events.user.v2.UserCreatedEvent`.
+   `me.tinkle.events.user.v2.UserCreatedEvent`.
 2. Register it under a **new subject**:
    `outbox.user.event-value` version 2.
 3. Producers dual-write to **both** `v1` and `v2` for one release

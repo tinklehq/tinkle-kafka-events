@@ -16,7 +16,7 @@ subject = <topic>-key        // for message keys (we use STRING keys, not schema
 
 `RecordNameStrategy` derives the subject from the **fully-qualified
 record name**. With our envelope pattern, every topic would share the
-subject `io.tinklehq.events.common.v1.Envelope-value` — which means
+subject `me.tinkle.events.common.v1.Envelope-value` — which means
 **every topic's schema would be in the same subject, and any change
 would be compared against every other topic's payload**. That's an
 operational nightmare.
@@ -29,7 +29,7 @@ for its compatibility.
 
 | Topic                       | Subject                       | Schemas (current)                                                                 |
 | --------------------------- | ----------------------------- | --------------------------------------------------------------------------------- |
-| `outbox.user.event`         | `outbox.user.event-value`     | `io.tinklehq.events.common.v1.Envelope` (record wraps the concrete event)        |
+| `outbox.user.event`         | `outbox.user.event-value`     | `me.tinkle.events.common.v1.Envelope` (record wraps the concrete event)        |
 | `outbox.chat.event`         | `outbox.chat.event-value`     | `Envelope`                                                                        |
 | `outbox.roster.event`       | `outbox.roster.event-value`   | `Envelope`                                                                        |
 | `outbox.peer.event`         | `outbox.peer.event-value`     | `Envelope`                                                                        |
@@ -53,9 +53,9 @@ can be looked up by record name from any consumer.
 2. Read the magic byte + schema-ID prefix to get the Envelope schema
    (which is always the latest version of `<topic>-value`).
 3. Decode the Envelope. Read `payload_schema`
-   (e.g. `io.tinklehq.events.user.v1.UserCreatedEvent`).
+   (e.g. `me.tinkle.events.user.v1.UserCreatedEvent`).
 4. Look up the Schema Registry subject for that FQN (e.g.
-   `io.tinklehq.events.user.v1.UserCreatedEvent`).
+   `me.tinkle.events.user.v1.UserCreatedEvent`).
 5. Fetch the latest version of that subject and decode `payload`.
 
 Step 4 is what makes the envelope pattern robust against union
@@ -85,7 +85,7 @@ by name.
 ### Bumping an event to a breaking new version
 
 1. Bump the schema's namespace to `v2`:
-   `io.tinklehq.events.user.v2.UserCreatedEvent`.
+   `me.tinkle.events.user.v2.UserCreatedEvent`.
 2. Register it under the **same subject** as v1
    (`outbox.user.event-value`); Schema Registry will store both
    versions.

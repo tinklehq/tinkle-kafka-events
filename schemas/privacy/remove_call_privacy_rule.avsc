@@ -1,7 +1,7 @@
 {
   "name": "RemoveCallPrivacyRuleEvent",
   "type": "record",
-  "namespace": "io.tinklehq.events.privacy.v1",
+  "namespace": "me.tinkle.events.privacy.v1",
   "doc": "Published by privacy-service when a call privacy rule override is deleted. Event type discriminator: 'remove_call_privacy_rule'. Topic: outbox.privacy.call. Aggregate: call.",
   "fields": [
     {

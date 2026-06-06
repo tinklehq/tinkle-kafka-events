@@ -1,7 +1,7 @@
 {
   "name": "UpsertChatInvitePrivacyEvent",
   "type": "record",
-  "namespace": "io.tinklehq.events.privacy.v1",
+  "namespace": "me.tinkle.events.privacy.v1",
   "doc": "Published by privacy-service when a user's chat-invite privacy setting is created or updated. Event type discriminator: 'upsert_chat_invite_privacy'. Topic: outbox.privacy.chat_invite. Aggregate: chat_invite.",
   "fields": [
     {
@@ -11,7 +11,7 @@
     },
     {
       "name": "allow_value",
-      "type": "io.tinklehq.events.privacy.v1.PrivacyAllowValue",
+      "type": "me.tinkle.events.privacy.v1.PrivacyAllowValue",
       "doc": "New allow value for chat-invite privacy."
     }
   ]

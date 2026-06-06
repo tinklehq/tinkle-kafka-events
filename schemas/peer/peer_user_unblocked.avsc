@@ -1,7 +1,7 @@
 {
   "name": "PeerUserUnblockedEvent",
   "type": "record",
-  "namespace": "io.tinklehq.events.peer.v1",
+  "namespace": "me.tinkle.events.peer.v1",
   "doc": "Published by chat-service (peer) when a user unblocks another user. Consumers should remove the target from the owner's blocklist projection and resume normal message delivery. Event type discriminator: 'peer_unblocked'. Topic: outbox.peer.event. Aggregate: event.",
   "fields": [
     {

@@ -12,4 +12,4 @@ Avro event schemas for the roster-service CDC topic.
 | `outbox.roster.event` | `event`   | `roster_mutual_contact_established`  | `mutual_contact_established.avsc` (`MutualContactEstablishedEvent`)   |
 | `outbox.roster.event` | `event`   | `roster_mutual_contact_broken`       | `mutual_contact_broken.avsc` (`MutualContactBrokenEvent`)             |
 
-All schemas share the namespace `io.tinklehq.events.roster.v1`.
+All schemas share the namespace `me.tinkle.events.roster.v1`.

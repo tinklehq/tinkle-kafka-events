@@ -17,7 +17,7 @@ they care about.
 | `profile_photo`   | `outbox.privacy.profile_photo`    | `profile_photo` | upsert / upsert_rule / remove_rule | `upsert_profile_photo_privacy.avsc`, `upsert_profile_photo_privacy_rule.avsc`, `remove_profile_photo_privacy_rule.avsc` |
 | `chat_invite`     | `outbox.privacy.chat_invite`      | `chat_invite`   | upsert / upsert_rule / remove_rule | `upsert_chat_invite_privacy.avsc`, `upsert_chat_invite_privacy_rule.avsc`, `remove_chat_invite_privacy_rule.avsc` |
 
-All schemas share the namespace `io.tinklehq.events.privacy.v1`. The
+All schemas share the namespace `me.tinkle.events.privacy.v1`. The
 shared `PrivacyAllowValue` and `PrivacyRuleAction` enums are defined in
 [`schemas/common/enums.avsc`](../common/enums.avsc) and
 [`schemas/common/enums_privacy_action.avsc`](../common/enums_privacy_action.avsc).

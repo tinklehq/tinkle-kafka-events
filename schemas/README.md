@@ -2,7 +2,7 @@
 
 This directory tree holds every Avro schema for Tinkle Messenger's
 internal Kafka CDC events. One record per `.avsc` file. Namespaces
-follow the convention `io.tinklehq.events.<service>.v1`.
+follow the convention `me.tinkle.events.<service>.v1`.
 
 | Directory  | Topic(s)                                            |
 | ---------- | --------------------------------------------------- |
@@ -47,12 +47,12 @@ follows that pattern.
 ### Namespaces and FQNs
 
 - Every record and enum has a `namespace` of the form
-  `io.tinklehq.events.<service>.v<N>`.
+  `me.tinkle.events.<service>.v<N>`.
 - The shared privacy enums
   ([`PrivacyAllowValue`](common/enums.avsc),
   [`PrivacyRuleAction`](common/enums_privacy_action.avsc))
   intentionally live under `schemas/common/` but use the
-  `io.tinklehq.events.privacy.v1` namespace, so that other schemas
+  `me.tinkle.events.privacy.v1` namespace, so that other schemas
   can reference them without a circular import. The `doc` field on
   each enum explains this.
 - All identifiers (`name`, `namespace`, field names) are

@@ -1,7 +1,7 @@
 {
   "name": "PrivacyRuleAction",
   "type": "enum",
-  "namespace": "io.tinklehq.events.privacy.v1",
+  "namespace": "me.tinkle.events.privacy.v1",
   "doc": "Action of a per-target privacy rule override. The combination of (user_id, target_user_id, kind) plus this action determines whether the target is allowed or denied to see the owner's setting.",
   "symbols": [
     "PRIVACY_RULE_ACTION_UNSPECIFIED",

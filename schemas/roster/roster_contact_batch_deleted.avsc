@@ -1,7 +1,7 @@
 {
   "name": "RosterContactBatchDeletedEvent",
   "type": "record",
-  "namespace": "io.tinklehq.events.roster.v1",
+  "namespace": "me.tinkle.events.roster.v1",
   "doc": "Published by roster-service when multiple contacts are removed in a single bulk operation (ResetRoster). Contains ONLY contacts that had a resolved contact_user_id (> 0). Scoped to a single owner — one event per owner per batch operation. Event type discriminator: 'roster_contact_batch_deleted'. Topic: outbox.roster.event. Aggregate: event.",
   "fields": [
     {

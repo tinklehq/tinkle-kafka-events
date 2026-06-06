@@ -1,7 +1,7 @@
 {
   "name": "RosterContactAddedEvent",
   "type": "record",
-  "namespace": "io.tinklehq.events.roster.v1",
+  "namespace": "me.tinkle.events.roster.v1",
   "doc": "Published by roster-service when a new contact reference is added. Fires only on the FIRST row insert for an (owner, contact) pair. Event type discriminator: 'roster_contact_added'. Topic: outbox.roster.event. Aggregate: event.",
   "fields": [
     {

@@ -1,7 +1,7 @@
 {
   "name": "UserDeletedEvent",
   "type": "record",
-  "namespace": "io.tinklehq.events.user.v1",
+  "namespace": "me.tinkle.events.user.v1",
   "doc": "Published by user-service when a user account is deleted (hard delete). Consumers should use this to clean up user-related projections and revoke any outstanding tokens. Event type discriminator: 'user_deleted'. Topic: outbox.user.event. Aggregate: event.",
   "fields": [
     {

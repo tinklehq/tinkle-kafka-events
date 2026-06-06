@@ -1,7 +1,7 @@
 {
   "name": "Envelope",
   "type": "record",
-  "namespace": "io.tinklehq.events.common.v1",
+  "namespace": "me.tinkle.events.common.v1",
   "doc": "Standard Avro envelope wrapping every event published to a Tinkle Kafka topic. The envelope carries routing, ordering, tracing, and provenance metadata so that infrastructure (connectors, dead-letter routers, observability tools) can reason about the message without understanding the concrete payload. The actual event payload lives in the `payload` field, encoded according to the schema whose fully-qualified name is recorded in `event_type_schema`. Decoding the payload requires loading the referenced schema from the Schema Registry (or this repository).",
   "fields": [
     {
@@ -40,7 +40,7 @@
     {
       "name": "payload_schema",
       "type": "string",
-      "doc": "Fully-qualified name of the Avro record contained in `payload` (e.g. 'io.tinklehq.events.user.v1.UserCreatedEvent'). This allows consumers to look up the exact schema from Schema Registry without consulting event_type."
+      "doc": "Fully-qualified name of the Avro record contained in `payload` (e.g. 'me.tinkle.events.user.v1.UserCreatedEvent'). This allows consumers to look up the exact schema from Schema Registry without consulting event_type."
     },
     {
       "name": "traceparent",

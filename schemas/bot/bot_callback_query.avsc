@@ -1,7 +1,7 @@
 {
   "name": "BotCallbackQueryEvent",
   "type": "record",
-  "namespace": "io.tinklehq.events.bot.v1",
+  "namespace": "me.tinkle.events.bot.v1",
   "doc": "Published by bot-service when a user presses an inline-keyboard button attached to a bot message. Event type discriminator: 'bot_callback_query'. Topic: outbox.bot.event. Aggregate: event.",
   "fields": [
     {

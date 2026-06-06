@@ -1,7 +1,7 @@
 {
   "name": "RemoveChatInvitePrivacyRuleEvent",
   "type": "record",
-  "namespace": "io.tinklehq.events.privacy.v1",
+  "namespace": "me.tinkle.events.privacy.v1",
   "doc": "Published by privacy-service when a chat-invite privacy rule override is deleted. Event type discriminator: 'remove_chat_invite_privacy_rule'. Topic: outbox.privacy.chat_invite. Aggregate: chat_invite.",
   "fields": [
     {

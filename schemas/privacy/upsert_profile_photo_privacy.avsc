@@ -1,7 +1,7 @@
 {
   "name": "UpsertProfilePhotoPrivacyEvent",
   "type": "record",
-  "namespace": "io.tinklehq.events.privacy.v1",
+  "namespace": "me.tinkle.events.privacy.v1",
   "doc": "Published by privacy-service when a user's profile photo privacy setting is created or updated. Event type discriminator: 'upsert_profile_photo_privacy'. Topic: outbox.privacy.profile_photo. Aggregate: profile_photo.",
   "fields": [
     {
@@ -11,7 +11,7 @@
     },
     {
       "name": "allow_value",
-      "type": "io.tinklehq.events.privacy.v1.PrivacyAllowValue",
+      "type": "me.tinkle.events.privacy.v1.PrivacyAllowValue",
       "doc": "New allow value for profile photo privacy."
     }
   ]

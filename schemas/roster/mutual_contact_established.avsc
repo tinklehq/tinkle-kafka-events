@@ -1,7 +1,7 @@
 {
   "name": "MutualContactEstablishedEvent",
   "type": "record",
-  "namespace": "io.tinklehq.events.roster.v1",
+  "namespace": "me.tinkle.events.roster.v1",
   "doc": "Published by roster-service when a previously one-directional contact relationship becomes mutual (both users have added each other). Event type discriminator: 'roster_mutual_contact_established'. Topic: outbox.roster.event. Aggregate: event.",
   "fields": [
     {
