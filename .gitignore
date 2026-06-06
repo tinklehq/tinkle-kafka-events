@@ -1,0 +1,23 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS / tmp
+*.tmp
+*.bak
+*.log
+Thumbs.db
+
+# Avro / generated code
+*.avro
+build/
+dist/
+gen/

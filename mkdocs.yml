@@ -1,0 +1,83 @@
+site_name: tinkle-kafka-events
+site_description: Apache Avro schemas for Tinkle Messenger Kafka CDC events
+site_url: https://tinklehq.github.io/tinkle-kafka-events/
+repo_url: https://github.com/tinklehq/tinkle-kafka-events
+repo_name: tinklehq/tinkle-kafka-events
+
+docs_dir: .
+# Mkdocs does not look in dotfile-prefixed dirs by default; we still
+# want to serve schemas/<service>/README.md pages so include them.
+exclude_docs: |
+  /.git/
+  /scripts/
+  /schemas/.*\.avsc$
+  /LICENSE
+
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.highlight
+    - search.share
+    - search.suggest
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+
+nav:
+  - Overview: README.md
+  - Architecture: docs/architecture.md
+  - Envelope pattern: docs/envelope.md
+  - Compatibility: docs/compatibility.md
+  - Subject naming: docs/subject-naming.md
+  - Schemas:
+      - Overview: schemas/README.md
+      - common/: schemas/common/README.md
+      - user/: schemas/user/README.md
+      - chat/: schemas/chat/README.md
+      - roster/: schemas/roster/README.md
+      - peer/: schemas/peer/README.md
+      - privacy/: schemas/privacy/README.md
+      - message/: schemas/message/README.md
+      - muc/: schemas/muc/README.md
+      - bot/: schemas/bot/README.md
+
+plugins:
+  - search
