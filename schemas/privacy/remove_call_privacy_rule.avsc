@@ -1,0 +1,18 @@
+{
+  "type": "record",
+  "name": "RemoveCallPrivacyRuleEvent",
+  "namespace": "io.tinklehq.events.privacy.v1",
+  "doc": "Published by privacy-service when a call privacy rule override is deleted. Event type discriminator: 'remove_call_privacy_rule'. Topic: outbox.privacy.call. Aggregate: call.",
+  "fields": [
+    {
+      "name": "user_id",
+      "type": "long",
+      "doc": "Snowflake ID of the rule owner."
+    },
+    {
+      "name": "target_user_id",
+      "type": "long",
+      "doc": "Snowflake ID of the rule target being removed."
+    }
+  ]
+}

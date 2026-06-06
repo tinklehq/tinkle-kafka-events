@@ -1,0 +1,23 @@
+{
+  "type": "record",
+  "name": "UpsertPhoneNumberPrivacyRuleEvent",
+  "namespace": "io.tinklehq.events.privacy.v1",
+  "doc": "Published by privacy-service when a phone number privacy rule override is created or updated. Event type discriminator: 'upsert_phone_number_privacy_rule'. Topic: outbox.privacy.phone_number. Aggregate: phone_number.",
+  "fields": [
+    {
+      "name": "user_id",
+      "type": "long",
+      "doc": "Snowflake ID of the rule owner."
+    },
+    {
+      "name": "target_user_id",
+      "type": "long",
+      "doc": "Snowflake ID of the rule target."
+    },
+    {
+      "name": "action",
+      "type": "io.tinklehq.events.privacy.v1.PrivacyRuleAction",
+      "doc": "Allow or deny action for this target."
+    }
+  ]
+}
