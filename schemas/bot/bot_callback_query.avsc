@@ -1,0 +1,41 @@
+{
+  "type": "record",
+  "name": "BotCallbackQueryEvent",
+  "namespace": "io.tinklehq.events.bot.v1",
+  "doc": "Published by bot-service when a user presses an inline-keyboard button attached to a bot message. Event type discriminator: 'bot_callback_query'. Topic: outbox.bot.event. Aggregate: event.",
+  "fields": [
+    {
+      "name": "bot_id",
+      "type": "long",
+      "doc": "Snowflake ID of the bot that owns the inline keyboard."
+    },
+    {
+      "name": "sender_user_id",
+      "type": "long",
+      "doc": "Snowflake ID of the user who pressed the button."
+    },
+    {
+      "name": "chat_id",
+      "type": "long",
+      "doc": "Snowflake ID of the chat containing the message with the inline keyboard."
+    },
+    {
+      "name": "message_id",
+      "type": "long",
+      "doc": "Snowflake ID of the message that owns the inline keyboard button that was pressed."
+    },
+    {
+      "name": "callback_data",
+      "type": "string",
+      "doc": "Data payload that the bot attached to the button when it sent the message. Opaque to the platform; the bot interprets it."
+    },
+    {
+      "name": "created_at",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      },
+      "doc": "Wall-clock instant at which the button was pressed."
+    }
+  ]
+}

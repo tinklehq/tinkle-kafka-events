@@ -1,0 +1,31 @@
+{
+  "type": "record",
+  "name": "BotMessageDeletedEvent",
+  "namespace": "io.tinklehq.events.bot.v1",
+  "doc": "Published by bot-service when a bot deletes one of its own messages. Event type discriminator: 'bot_message_deleted'. Topic: outbox.bot.event. Aggregate: event.",
+  "fields": [
+    {
+      "name": "bot_id",
+      "type": "long",
+      "doc": "Snowflake ID of the bot that owns the message."
+    },
+    {
+      "name": "chat_id",
+      "type": "long",
+      "doc": "Snowflake ID of the chat containing the deleted message."
+    },
+    {
+      "name": "message_id",
+      "type": "long",
+      "doc": "Snowflake ID of the deleted message."
+    },
+    {
+      "name": "deleted_at",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      },
+      "doc": "Wall-clock instant at which the deletion occurred."
+    }
+  ]
+}
