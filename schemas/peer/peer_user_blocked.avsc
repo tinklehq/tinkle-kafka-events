@@ -1,0 +1,26 @@
+{
+  "type": "record",
+  "name": "PeerUserBlockedEvent",
+  "namespace": "io.tinklehq.events.peer.v1",
+  "doc": "Published by chat-service (peer) when a user blocks another user. Consumers should drop any in-flight messages between the two users and add the target to the owner's blocklist projection. Event type discriminator: 'peer_blocked'. Topic: outbox.peer.event. Aggregate: event.",
+  "fields": [
+    {
+      "name": "owner_user_id",
+      "type": "long",
+      "doc": "Snowflake ID of the user who initiated the block."
+    },
+    {
+      "name": "target_user_id",
+      "type": "long",
+      "doc": "Snowflake ID of the user being blocked."
+    },
+    {
+      "name": "created_at",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      },
+      "doc": "Wall-clock instant at which the block occurred."
+    }
+  ]
+}

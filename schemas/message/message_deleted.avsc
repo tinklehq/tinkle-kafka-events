@@ -1,0 +1,31 @@
+{
+  "type": "record",
+  "name": "MessageDeletedEvent",
+  "namespace": "io.tinklehq.events.message.v1",
+  "doc": "Published by chat-service when a user deletes a message for themselves. The target identifier is stable and is NOT rewritten for per-user deletion. Event type discriminator: 'message_deleted'. Aggregate: event.",
+  "fields": [
+    {
+      "name": "requester_peer_id",
+      "type": "long",
+      "doc": "Snowflake peer ID of the user who requested deletion. The deletion applies only to this user's view of the message."
+    },
+    {
+      "name": "target",
+      "type": "string",
+      "doc": "Conversation identifier (stable; not rewritten for deletion). Same format as MessageCreatedEvent.target."
+    },
+    {
+      "name": "message_id",
+      "type": "long",
+      "doc": "Snowflake ID of the deleted message."
+    },
+    {
+      "name": "deleted_at",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      },
+      "doc": "Wall-clock instant at which the message was deleted."
+    }
+  ]
+}

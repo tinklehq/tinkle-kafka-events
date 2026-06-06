@@ -1,0 +1,21 @@
+{
+  "type": "record",
+  "name": "ChatCreatedEvent",
+  "namespace": "io.tinklehq.events.chat.v1",
+  "doc": "Published by chat-service (muc) when a new chat (1:1, group, or broadcast) is created. Event type discriminator: 'chat_created'. Topic: outbox.chat.event. Aggregate: event.",
+  "fields": [
+    {
+      "name": "chat_id",
+      "type": "long",
+      "doc": "Snowflake ID of the newly created chat."
+    },
+    {
+      "name": "created_at",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      },
+      "doc": "Wall-clock instant at which the chat was created."
+    }
+  ]
+}

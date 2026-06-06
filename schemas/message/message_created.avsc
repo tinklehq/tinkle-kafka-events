@@ -1,0 +1,31 @@
+{
+  "type": "record",
+  "name": "MessageCreatedEvent",
+  "namespace": "io.tinklehq.events.message.v1",
+  "doc": "Published by chat-service when a message is successfully persisted. Consumers should use this to update message-related projections (search index, notification fan-out, unread counters, etc.). Event type discriminator: 'message_created'. Aggregate: event.",
+  "fields": [
+    {
+      "name": "sender_peer_id",
+      "type": "long",
+      "doc": "Snowflake peer ID of the message sender. A peer is either a user or a bot; the high bit of the ID distinguishes the two."
+    },
+    {
+      "name": "target",
+      "type": "string",
+      "doc": "Conversation identifier. For DM conversations the format is 'userId:userId' (smaller ID first). For group conversations the format is 'CHAT:chatId'."
+    },
+    {
+      "name": "message_id",
+      "type": "long",
+      "doc": "Snowflake ID of the newly created message."
+    },
+    {
+      "name": "created_at",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      },
+      "doc": "Wall-clock instant at which the event was created (typically the message's server-side create time)."
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "type": "record",
+  "name": "UserDeletedEvent",
+  "namespace": "io.tinklehq.events.user.v1",
+  "doc": "Published by user-service when a user account is deleted (hard delete). Consumers should use this to clean up user-related projections and revoke any outstanding tokens. Event type discriminator: 'user_deleted'. Topic: outbox.user.event. Aggregate: event.",
+  "fields": [
+    {
+      "name": "user_id",
+      "type": "long",
+      "doc": "Snowflake ID of the deleted user."
+    },
+    {
+      "name": "created_at",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      },
+      "doc": "Wall-clock instant at which the user was deleted."
+    },
+    {
+      "name": "phone_number",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null,
+      "doc": "Optional phone number in E.164 format. Null in the rare case the user had no phone. Consumers should revoke any tokens or sessions keyed on this phone number."
+    }
+  ]
+}
