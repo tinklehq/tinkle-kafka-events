@@ -1,0 +1,36 @@
+// Published by roster-service when a new contact reference is added.
+// Fires only on the FIRST row insert for an (owner, contact) pair.
+// Event type discriminator: "roster_contact_added".
+// Topic: outbox.roster.event. Aggregate: event.
+syntax = "proto3";
+
+package me.tinkle.events.roster.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/tinklehq/kafka-events/gen/go/me/tinkle/events/roster/v1";
+option java_multiple_files = true;
+option java_package = "com.tinklehq.kafkaevents.me.tinkle.events.roster.v1";
+
+message RosterContactAddedEvent {
+  // Snowflake ID of the roster owner (the user who added the contact).
+  int64 owner_user_id = 1;
+
+  // Snowflake ID of the contact that was added. Will be > 0
+  // (already-resolved contacts only).
+  int64 contact_user_id = 2;
+
+  // Wall-clock instant at which the contact reference was added.
+  google.protobuf.Timestamp created_at = 3;
+
+  // Unique roster-item identifier (composed of owner_user_id +
+  // custom_id) for per-item distinction. Populated only when the
+  // contact was added with an explicit custom id. Empty string when
+  // not set.
+  optional string custom_id = 4;
+
+  // Phone number of the roster item in E.164 format, if known at add
+  // time. Empty string when the contact was resolved purely by user
+  // ID lookup.
+  optional string phone_number = 5;
+}

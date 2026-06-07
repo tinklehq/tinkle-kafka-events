@@ -1,0 +1,21 @@
+// Published by privacy-service when a user's chat_invite privacy
+// setting is created or updated.
+// Event type discriminator: "upsert_chat_invite_privacy".
+// Topic: outbox.privacy.chat_invite. Aggregate: chat_invite.
+syntax = "proto3";
+
+package me.tinkle.events.privacy.v1;
+
+import "me/tinkle/events/common/v1/privacy_allow_value.proto";
+
+option go_package = "github.com/tinklehq/kafka-events/gen/go/me/tinkle/events/privacy/v1";
+option java_multiple_files = true;
+option java_package = "com.tinklehq.kafkaevents.me.tinkle.events.privacy.v1";
+
+message UpsertChatInvitePrivacyEvent {
+  // Snowflake ID of the setting owner.
+  int64 user_id = 1;
+
+  // New allow value for chat_invite privacy.
+  me.tinkle.events.common.v1.PrivacyAllowValue allow_value = 2;
+}

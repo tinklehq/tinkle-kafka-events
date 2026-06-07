@@ -16,8 +16,11 @@
 *.log
 Thumbs.db
 
-# Avro / generated code
-*.avro
+# Protobuf / generated code
+*.pb.go
+*.pb.cc
+*.pb.h
+*.pb.py
 build/
 dist/
 gen/
@@ -26,4 +29,8 @@ gen/
 __pycache__/
 *.pyc
 *.pyo
+
+# Buf
+.buf/
+
 
