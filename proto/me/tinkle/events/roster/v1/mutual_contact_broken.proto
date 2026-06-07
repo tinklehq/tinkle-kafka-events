@@ -1,0 +1,25 @@
+// Emitted by roster-service when a previously mutual contact
+// relationship becomes one-directional again (one party removed the
+// other).
+// Event type discriminator: "roster_mutual_contact_broken".
+// Topic: outbox.roster.event. Aggregate: event.
+syntax = "proto3";
+
+package me.tinkle.events.roster.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/tinklehq/kafka-events/gen/go/me/tinkle/events/roster/v1";
+option java_multiple_files = true;
+option java_package = "com.tinklehq.kafkaevents.me.tinkle.events.roster.v1";
+
+message MutualContactBrokenEvent {
+  // Snowflake ID of the roster owner.
+  int64 owner_user_id = 1;
+
+  // Snowflake ID of the contact that is no longer mutual.
+  int64 contact_user_id = 2;
+
+  // Wall-clock instant at which the mutual relationship was broken.
+  google.protobuf.Timestamp created_at = 3;
+}

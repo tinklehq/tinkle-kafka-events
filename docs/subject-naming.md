@@ -1,6 +1,7 @@
 # Subject naming
 
-> How this repo maps Kafka topics to Schema Registry subjects.
+> How this repo maps Kafka topics to Confluent Schema Registry
+> subjects.
 
 ## Strategy
 
@@ -25,11 +26,18 @@ TopicNameStrategy gives us a per-topic subject, which matches our
 operational reality: one team owns one topic, one team is responsible
 for its compatibility.
 
-## Concrete subject -> schema mapping
+### Why not `TopicRecordNameStrategy`?
+
+`TopicRecordNameStrategy` gives one subject per `(topic, record)`
+pair, which is closer to the `oneof`-payload model. We deliberately
+don't use a `oneof` payload (see [`envelope.md`](envelope.md)), so the
+extra dimension is unnecessary.
+
+## Concrete subject → schema mapping
 
 | Topic                       | Subject                       | Schemas (current)                                                                 |
 | --------------------------- | ----------------------------- | --------------------------------------------------------------------------------- |
-| `outbox.user.event`         | `outbox.user.event-value`     | `me.tinkle.events.common.v1.Envelope` (record wraps the concrete event)        |
+| `outbox.user.event`         | `outbox.user.event-value`     | `me.tinkle.events.common.v1.Envelope` (record wraps the concrete event)          |
 | `outbox.chat.event`         | `outbox.chat.event-value`     | `Envelope`                                                                        |
 | `outbox.roster.event`       | `outbox.roster.event-value`   | `Envelope`                                                                        |
 | `outbox.peer.event`         | `outbox.peer.event-value`     | `Envelope`                                                                        |
@@ -43,9 +51,12 @@ for its compatibility.
 | `outbox.bot.event`          | `outbox.bot.event-value`      | `Envelope`                                                                        |
 
 The **concrete event schemas** (`UserCreatedEvent`, `RosterContactAddedEvent`,
-...) are registered as **referenced** schemas — they are uploaded
-alongside the Envelope, but live under their own FQN subject so they
-can be looked up by record name from any consumer.
+...) are registered alongside the Envelope under the same subject
+(the Envelope's `.proto` text references each concrete message via
+the `payload_schema` string at runtime, but the SR subject itself is
+per-topic). The concrete schemas are also registered individually
+under their FQN-derived subject so they can be looked up by name from
+any consumer (the same way as the Avro era).
 
 ## How a consumer finds the right schema
 
@@ -58,42 +69,44 @@ can be looked up by record name from any consumer.
    `me.tinkle.events.user.v1.UserCreatedEvent`).
 5. Fetch the latest version of that subject and decode `payload`.
 
-Step 4 is what makes the envelope pattern robust against union
-encoding: consumers never need to know the union, they just look up
-by name.
+Step 4 is what makes the envelope pattern robust against `oneof`
+encoding: consumers never need to know the `oneof` variants, they
+just look up by name.
 
 ## Operational workflows
 
 ### Adding a new event type to an existing topic
 
-1. Add the new `.avsc` under the appropriate `schemas/<service>/`
-   directory.
+1. Add the new `.proto` under the appropriate
+   `proto/me/tinkle/events/<service>/v1/` directory.
 2. Run `./scripts/validate.sh` locally to confirm it parses.
-3. Open a PR. CI registers the candidate schema against the staging
-   Schema Registry; if it's incompatible with the latest version the
-   PR fails.
+3. Open a PR. CI runs `buf lint`, `buf breaking`, and registers the
+   candidate schema against the staging Schema Registry; if it's
+   incompatible with the latest version the PR fails.
 
 ### Adding a new topic
 
 1. Pick a topic name (e.g. `outbox.<service>.<aggregate>`).
-2. Author the per-event `.avsc` files under a new
-   `schemas/<service>/` directory.
+2. Author the per-event `.proto` files under a new
+   `proto/me/tinkle/events/<service>/v1/` directory.
 3. Register the Envelope schema under `<topic>-value` in the
    registry. This will auto-create the subject.
 4. Update producer and consumer code to use the new topic.
 
 ### Bumping an event to a breaking new version
 
-1. Bump the schema's namespace to `v2`:
+1. Bump the schema's package to `v2`:
    `me.tinkle.events.user.v2.UserCreatedEvent`.
-2. Register it under the **same subject** as v1
+2. Create a sibling directory
+   `proto/me/tinkle/events/user/v2/user_created.proto`.
+3. Register it under the **same subject** as v1
    (`outbox.user.event-value`); Schema Registry will store both
-   versions.
-3. Producers dual-write to **both** `v1` and `v2` for one release
+   versions of the FileDescriptor.
+4. Producers dual-write to **both** `v1` and `v2` for one release
    window.
-4. Consumers migrate to `v2`.
-5. Producers stop dual-writing.
-6. The `v1` subject is **frozen** (still readable by old consumers for
+5. Consumers migrate to `v2`.
+6. Producers stop dual-writing.
+7. The `v1` package is **frozen** (still readable by old consumers for
    replay), but not evolved further.
-7. After a defined grace period (typically one quarter), the `v1`
+8. After a defined grace period (typically one quarter), the `v1`
    version of the subject is marked `deleted: true` in the registry.

@@ -1,0 +1,19 @@
+// Published by privacy-service when a phone number privacy rule
+// override is deleted.
+// Event type discriminator: "remove_phone_number_privacy_rule".
+// Topic: outbox.privacy.phone_number. Aggregate: phone_number.
+syntax = "proto3";
+
+package me.tinkle.events.privacy.v1;
+
+option go_package = "github.com/tinklehq/kafka-events/gen/go/me/tinkle/events/privacy/v1";
+option java_multiple_files = true;
+option java_package = "com.tinklehq.kafkaevents.me.tinkle.events.privacy.v1";
+
+message RemovePhoneNumberPrivacyRuleEvent {
+  // Snowflake ID of the rule owner.
+  int64 user_id = 1;
+
+  // Snowflake ID of the rule target being removed.
+  int64 target_user_id = 2;
+}

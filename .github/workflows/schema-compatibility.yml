@@ -3,70 +3,88 @@ name: schema-compatibility
 on:
   pull_request:
     paths:
-      - 'schemas/**'
+      - 'proto/**'
+      - 'buf.yaml'
+      - 'buf.gen.yaml'
       - 'scripts/**'
       - '.github/workflows/schema-compatibility.yml'
   push:
     branches:
       - main
     paths:
-      - 'schemas/**'
+      - 'proto/**'
 
 jobs:
-  validate:
-    name: Parse all Avro schemas
+  lint:
+    name: buf lint + breaking
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Set up Buf
+        uses: bufbuild/buf-action@v1
         with:
-          python-version: '3.11'
+          setup_only: true
 
-      - name: Install fastavro
+      - name: buf lint
         run: |
-          python -m pip install --upgrade pip
-          pip install fastavro==1.9.4
+          if [ -n "$(find proto -name '*.proto' -type f 2>/dev/null)" ]; then
+            buf lint proto
+          else
+            echo "No .proto files yet — skipping buf lint."
+          fi
 
-      - name: Run validate.sh
-        run: ./scripts/validate.sh
+      - name: buf format check
+        run: |
+          if [ -n "$(find proto -name '*.proto' -type f 2>/dev/null)" ]; then
+            buf format -d proto
+          else
+            echo "No .proto files yet — skipping buf format check."
+          fi
 
-  compatibility:
-    name: Check BACKWARD compatibility against staging registry
-    needs: validate
+      - name: buf breaking
+        if: github.event_name == 'pull_request'
+        run: |
+          if [ -n "$(find proto -name '*.proto' -type f 2>/dev/null)" ]; then
+            if [ -n "$(git ls-tree -r --name-only origin/${GITHUB_BASE_REF:-main} -- proto 2>/dev/null | grep '\.proto$' || true)" ]; then
+              buf breaking --against '.git#branch=origin/${GITHUB_BASE_REF:-main}' proto
+            else
+              echo "No .proto files on origin/${GITHUB_BASE_REF:-main} yet — skipping buf breaking."
+            fi
+          else
+            echo "No .proto files yet — skipping buf breaking."
+          fi
+
+  register-sr:
+    name: Register changed .proto against staging SR (BACKWARD_TRANSITIVE)
+    needs: lint
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Set up Buf
+        uses: bufbuild/buf-action@v1
         with:
-          python-version: '3.11'
+          setup_only: true
 
-      - name: Install helpers
-        run: |
-          python -m pip install --upgrade pip
-          pip install fastavro==1.9.4 requests
-
-      - name: Detect changed schemas
+      - name: Detect changed .proto files
         id: changed
         run: |
           {
             echo "changed<<EOF"
-            git diff --name-only origin/${GITHUB_BASE_REF:-main}...HEAD -- 'schemas/**/*.avsc' || true
+            git diff --name-only origin/${GITHUB_BASE_REF:-main}...HEAD -- 'proto/**/*.proto' || true
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
 
-      - name: Skip if no schema changes
+      - name: Skip if no .proto changes
         if: steps.changed.outputs.changed == ''
         run: |
-          echo "No Avro schema changes in this PR — nothing to check."
+          echo "No .proto schema changes in this PR — nothing to register."
 
-      - name: Register changed schemas against staging registry
+      - name: Register changed .proto files against staging SR
         if: steps.changed.outputs.changed != ''
         env:
           SCHEMA_REGISTRY_URL: ${{ secrets.SCHEMA_REGISTRY_STAGING_URL }}
@@ -75,30 +93,37 @@ jobs:
         run: |
           set -euo pipefail
           if [[ -z "${SCHEMA_REGISTRY_URL:-}" ]]; then
-            echo "::warning::SCHEMA_REGISTRY_STAGING_URL not configured — skipping compatibility check."
-            echo "         Configure the secret in repository settings to enable this check."
-            exit 0
+            echo "::error::SCHEMA_REGISTRY_STAGING_URL is not configured."
+            echo "        This PR changes a .proto file; the staging Confluent SR"
+            echo "        registration is required (BACKWARD_TRANSITIVE). Configure"
+            echo "        the SCHEMA_REGISTRY_STAGING_URL / USER / PASSWORD secrets"
+            echo "        in repository settings, then re-run CI."
+            exit 1
+          fi
+          if [[ -z "${SCHEMA_REGISTRY_USER:-}" || -z "${SCHEMA_REGISTRY_PASSWORD:-}" ]]; then
+            echo "::error::SCHEMA_REGISTRY_STAGING_USER and/or SCHEMA_REGISTRY_STAGING_PASSWORD are not configured."
+            exit 1
           fi
 
           for f in ${{ steps.changed.outputs.changed }}; do
             # Best-effort default subject from the file name. Production
             # subjects follow docs/subject-naming.md (TopicNameStrategy,
             # `<topic>-value`).
-            subject="$(basename "${f}" .avsc)"
+            subject="$(basename "${f}" .proto)"
             echo "::group::Registering ${f} -> subject '${subject}'"
-            # Normalise the JSON to a single line and POST.
-            schema_json="$(jq -c . "${f}")"
+            # Concatenate the .proto text into a single line for the JSON body.
+            proto_text="$(cat "${f}")"
             http_code=$(curl -fsSL -u "${SCHEMA_REGISTRY_USER}:${SCHEMA_REGISTRY_PASSWORD}" \
               -o /tmp/registry-response.json \
               -w '%{http_code}' \
               -X POST \
               -H 'Content-Type: application/vnd.schemaregistry.v1+json' \
-              --data-binary "$(jq -nc --arg s "${schema_json}" '{schema: $s}')" \
-              "${SCHEMA_REGISTRY_URL}/subjects/${subject}/versions?compatibility=BACKWARD" || echo "curl_failed")
+              --data "$(jq -nc --arg s "${proto_text}" '{schema: $s, schemaType: "PROTOBUF", compatibility: "BACKWARD_TRANSITIVE"}')" \
+              "${SCHEMA_REGISTRY_URL}/subjects/${subject}/versions" || echo "curl_failed")
             if [[ "${http_code}" == "200" ]]; then
               echo "  registered OK"
             elif [[ "${http_code}" == "409" ]]; then
-              echo "  INCOMPATIBLE — Schema Registry rejected the change"
+              echo "  INCOMPATIBLE — Schema Registry rejected the change (BACKWARD_TRANSITIVE)"
               cat /tmp/registry-response.json
               exit 1
             else

@@ -1,0 +1,26 @@
+// Published by chat-service when the original sender revokes a
+// message for ALL recipients. Only the original sender can revoke.
+// Event type discriminator: "message_revoked". Aggregate: event.
+syntax = "proto3";
+
+package me.tinkle.events.message.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/tinklehq/kafka-events/gen/go/me/tinkle/events/message/v1";
+option java_multiple_files = true;
+option java_package = "com.tinklehq.kafkaevents.me.tinkle.events.message.v1";
+
+message MessageRevokedEvent {
+  // Snowflake peer ID of the original sender (only they can revoke).
+  int64 sender_peer_id = 1;
+
+  // Conversation identifier.
+  string target = 2;
+
+  // Snowflake ID of the revoked message.
+  int64 message_id = 3;
+
+  // Wall-clock instant at which the revoke was applied.
+  google.protobuf.Timestamp revoked_at = 4;
+}

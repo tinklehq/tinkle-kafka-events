@@ -1,17 +1,16 @@
 #!/usr/bin/env bash
 #
-# validate.sh — local Avro schema validator.
+# validate.sh — local Protobuf schema validator.
 #
-# Verifies that every `.avsc` file under `schemas/` is a valid Avro
-# schema, with cross-file named-type references (e.g. an enum defined
-# in `schemas/common/enums.avsc` and referenced from a privacy event
-# schema) resolved correctly.
+# Verifies that every `.proto` file under `proto/` is well-formed,
+# the Buf `STANDARD` lint category is satisfied, and no wire-incompatible
+# change has been made against `main`.
 #
-# This script delegates the actual parsing to a tiny Python helper
-# (`scripts/validate.py`) because the Java `avro-tools` jar does not
-# easily resolve cross-file Avro named types when invoked one file at
-# a time. fastavro is the de-facto reference implementation for Avro
-# 1.11.x and is available in CI via `pip install fastavro`.
+# This script delegates the actual parsing to the Buf CLI because
+# Buf's `STANDARD` lint category enforces the Buf style guide
+# (enforced by the `MINIMAL` lint subcategory) — including the
+# `proto/<dotted>/<v1>/` directory layout that the Buf style guide
+# recommends.
 #
 # Usage:
 #   ./scripts/validate.sh
@@ -19,30 +18,48 @@
 # Exit code:
 #   0  - all schemas valid
 #   1  - one or more schemas invalid
-#   2  - missing dependency (Python or fastavro)
+#   2  - missing dependency (Buf)
 #
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
-PY="${PYTHON:-python3}"
 
-# --- 1. Ensure Python is available --------------------------------------------
-if ! command -v "${PY}" >/dev/null 2>&1; then
-  echo "ERROR: ${PY} not found in PATH. Install Python 3.8+." >&2
+# --- 1. Ensure buf is available -----------------------------------------------
+if ! command -v buf >/dev/null 2>&1; then
+  echo "ERROR: buf not found in PATH." >&2
+  echo "  Install: brew install bufbuild/buf/buf" >&2
+  echo "  Or:       https://buf.build/docs/installation" >&2
   exit 2
 fi
 
-# --- 2. Ensure fastavro is available -------------------------------------------
-if ! "${PY}" -c 'import fastavro' >/dev/null 2>&1; then
-  echo "fastavro not found; attempting to install..."
-  if ! "${PY}" -m pip install --user fastavro >/dev/null 2>&1; then
-    echo "ERROR: failed to install fastavro. Run: ${PY} -m pip install fastavro" >&2
-    exit 2
-  fi
+# --- 2. Detect whether proto/ has any .proto files --------------------------
+if [ -z "$(find "${REPO_ROOT}/proto" -name '*.proto' -type f 2>/dev/null)" ]; then
+  echo "No .proto files in proto/ yet — nothing to validate."
+  exit 0
 fi
 
-# --- 3. Run the validator ------------------------------------------------------
-echo "Running ${PY} ${SCRIPT_DIR}/validate.py"
-exec "${PY}" "${SCRIPT_DIR}/validate.py"
+# --- 3. Run buf lint ----------------------------------------------------------
+echo "==> buf lint"
+buf lint "${REPO_ROOT}/proto"
+
+# --- 4. Run buf format check --------------------------------------------------
+echo "==> buf format -d (no-op on well-formatted files)"
+buf format -d "${REPO_ROOT}/proto"
+
+# --- 5. Run buf breaking against main ----------------------------------------
+if git show-ref --verify --quiet "refs/heads/${BASE_BRANCH:-main}" 2>/dev/null \
+   || git rev-parse --verify "${BASE_BRANCH:-main}" >/dev/null 2>&1; then
+  if [ -n "$(git -C "${REPO_ROOT}" ls-tree -r --name-only "${BASE_BRANCH:-main}" -- proto 2>/dev/null | grep '\.proto$')" ]; then
+    echo "==> buf breaking --against '.git#branch=${BASE_BRANCH:-main}'"
+    buf breaking --against ".git#branch=${BASE_BRANCH:-main}" "${REPO_ROOT}/proto"
+  else
+    echo "==> (skipping buf breaking — no .proto files on '${BASE_BRANCH:-main}' yet)"
+  fi
+else
+  echo "==> (skipping buf breaking — no '${BASE_BRANCH:-main}' ref available)"
+fi
+
+echo
+echo "All Protobuf schemas are valid."

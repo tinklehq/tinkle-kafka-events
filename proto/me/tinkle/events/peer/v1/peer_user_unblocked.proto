@@ -1,0 +1,25 @@
+// Published by chat-service (peer) when a user unblocks another user.
+// Consumers should remove the target from the owner's blocklist
+// projection and resume normal message delivery.
+// Event type discriminator: "peer_unblocked".
+// Topic: outbox.peer.event. Aggregate: event.
+syntax = "proto3";
+
+package me.tinkle.events.peer.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/tinklehq/kafka-events/gen/go/me/tinkle/events/peer/v1";
+option java_multiple_files = true;
+option java_package = "com.tinklehq.kafkaevents.me.tinkle.events.peer.v1";
+
+message PeerUserUnblockedEvent {
+  // Snowflake ID of the user who initiated the unblock.
+  int64 owner_user_id = 1;
+
+  // Snowflake ID of the user being unblocked.
+  int64 target_user_id = 2;
+
+  // Wall-clock instant at which the unblock occurred.
+  google.protobuf.Timestamp created_at = 3;
+}

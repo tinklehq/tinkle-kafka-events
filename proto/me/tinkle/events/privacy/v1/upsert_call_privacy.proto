@@ -1,0 +1,26 @@
+// Published by privacy-service when a user's call privacy setting is
+// created or updated.
+// Event type discriminator: "upsert_call_privacy".
+// Topic: outbox.privacy.call. Aggregate: call.
+//
+// Privacy events are metadata-routing events and intentionally do
+// NOT carry a domain timestamp in the payload; consumers should use
+// the envelope's `occurred_at` instead.
+syntax = "proto3";
+
+package me.tinkle.events.privacy.v1;
+
+import "me/tinkle/events/common/v1/privacy_allow_value.proto";
+
+option go_package = "github.com/tinklehq/kafka-events/gen/go/me/tinkle/events/privacy/v1";
+option java_multiple_files = true;
+option java_package = "com.tinklehq.kafkaevents.me.tinkle.events.privacy.v1";
+
+message UpsertCallPrivacyEvent {
+  // Snowflake ID of the setting owner.
+  int64 user_id = 1;
+
+  // New allow value for call privacy. ALL = everyone, CONTACTS =
+  // roster only, NONE = nobody.
+  me.tinkle.events.common.v1.PrivacyAllowValue allow_value = 2;
+}

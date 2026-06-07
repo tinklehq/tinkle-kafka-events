@@ -16,10 +16,11 @@
           |                                                                    ^
           | produces                                                           | validates against
           v                                                                    |
-    +------------------------------------------------------------------+
-    |                  tinkle-kafka-events  (this repository)          |
-    |   Apache Avro `.avsc` schemas registered with a Schema Registry  |
-    +------------------------------------------------------------------+
+     +------------------------------------------------------------------+
+     |              tinkle-kafka-events  (this repository)              |
+     |  Protobuf `.proto` schemas (Buf-managed) registered with          |
+     |  Confluent Schema Registry in `schemaType: PROTOBUF` mode        |
+     +------------------------------------------------------------------+
 ```
 
 ## Data flow
@@ -29,8 +30,9 @@
 2. **Debezium** captures the `INSERT` from the outbox table via logical
    replication and publishes a CDC record to a Kafka topic.
 3. **Consumer** reads the topic, deserialises the message using the
-   Schema-Registry-resolved Avro schema, and applies the change to its
-   local projection.
+   Schema-Registry-resolved Protobuf schema (via
+   `KafkaProtobufDeserializer` / `confluent-kafka-go`'s `ProtoDeserializer`),
+   and applies the change to its local projection.
 4. **Schema registry** acts as the contract enforcer. Compatibility is
    checked at publish time; a producer cannot push a schema that would
    break a registered consumer.
@@ -56,16 +58,16 @@ land on the same partition and are processed in order.
 
 ## Per-topic subject strategy
 
-In Confluent Schema Registry, the **subject** is a logical namespace for
-a schema's history. We use the **TopicNameStrategy** (the default and
-the recommended setting for most deployments):
+In Confluent Schema Registry, the **subject** is a logical namespace
+for a schema's history. We use the **TopicNameStrategy** (the default
+and the recommended setting for most deployments):
 
-| Kafka topic               | Subject                       | Schema(s) registered                          |
-| ------------------------- | ----------------------------- | --------------------------------------------- |
-| `outbox.user.event`       | `outbox.user.event-value`     | `me.tinkle.events.common.v1.Envelope` (the wrapper for the message **value**; key is `aggregate_id` as a string) |
-| `outbox.roster.event`     | `outbox.roster.event-value`   | `Envelope`                                    |
-| `outbox.privacy.call`     | `outbox.privacy.call-value`   | `Envelope`                                    |
-| ...                       | ...                           | ...                                           |
+| Kafka topic               | Subject                       | Schema(s) registered                                |
+| ------------------------- | ----------------------------- | --------------------------------------------------- |
+| `outbox.user.event`       | `outbox.user.event-value`     | `me.tinkle.events.common.v1.Envelope` (the wrapper) |
+| `outbox.roster.event`     | `outbox.roster.event-value`   | `Envelope`                                          |
+| `outbox.privacy.call`     | `outbox.privacy.call-value`   | `Envelope`                                          |
+| ...                       | ...                           | ...                                                 |
 
 The Envelope wraps a single concrete event record (per-event schema).
 The Envelope's `payload` field is `bytes`; the consumer looks up the
@@ -75,17 +77,21 @@ concrete schema by `event_type` and decodes accordingly.
 
 ## What this repo is
 
-This Avro repository is the **authoritative wire contract** for every
-Kafka CDC event in the Tinkle stack. It provides:
+This Protobuf repository is the **authoritative wire contract** for
+every Kafka CDC event in the Tinkle stack. It provides:
 
 * A **polyglot** contract for non-Go consumers (Elixir chat-node,
   Java/Kotlin mobile gateways, Python analytics, future Rust services).
 * A **schema-registry-friendly** format with native compatibility
   checking, code generation, and runtime validation.
-* A **public, audit-friendly** record of the data contract — Avro
-  schemas are JSON, easy to diff and review in PRs.
+* A **public, audit-friendly** record of the data contract — `.proto`
+  files are textual, easy to diff and review in PRs.
+* A **Buf-managed** module: `buf lint` enforces the `STANDARD` style
+  category on every PR; `buf breaking --against '.git#branch=main'`
+  blocks any wire-incompatible change before it lands.
 
 The repo is deliberately standalone: nothing here references or
-depends on any other repository. Each `.avsc` is a self-contained
-contract, registered with Schema Registry and consumed by any service
-that wants to read or write the corresponding topic.
+depends on any other repository. Each `.proto` is a self-contained
+contract, registered with Confluent Schema Registry in `PROTOBUF` mode
+and consumed by any service that wants to read or write the
+corresponding topic.
