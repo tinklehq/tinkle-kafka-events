@@ -1,0 +1,29 @@
+// Visibility scope of a user's privacy setting for a given kind
+// (call, presence, phone_number, about, profile_photo, chat_invite).
+//
+// Owned by the privacy-service event contract; lives under
+// proto/common/v1/ only so other packages can
+// reference it without a circular import. The package is
+// tinkle.events.common.v1 intentionally.
+syntax = "proto3";
+
+package tinkle.events.common.v1;
+
+option go_package = "github.com/tinklehq/tinkle-kafka-events/proto/common/v1;tinkleeventscommonv1";
+option java_multiple_files = true;
+option java_package = "me.tinkle.events.common.v1";
+
+enum PrivacyAllowValue {
+  // Default zero value. Used when a privacy setting has not been
+  // initialised; consumers SHOULD treat this as "not yet decided".
+  PRIVACY_ALLOW_VALUE_UNSPECIFIED = 0;
+
+  // Everyone can see the setting.
+  PRIVACY_ALLOW_VALUE_ALL = 1;
+
+  // Only the user's roster contacts can see the setting.
+  PRIVACY_ALLOW_VALUE_CONTACTS = 2;
+
+  // Nobody can see the setting (the user is invisible to everyone).
+  PRIVACY_ALLOW_VALUE_NONE = 3;
+}

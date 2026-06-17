@@ -1,0 +1,43 @@
+// Published by muc-service when a message targeting a bot is
+// persisted. Routed by Debezium to the dedicated `outbox.muc.message`
+// topic so that the bot-service consumer (and only that consumer) is
+// triggered.
+// Event type discriminator: "message_to_bot".
+// Topic: outbox.muc.message. Aggregate: message.
+syntax = "proto3";
+
+package tinkle.events.muc.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/tinklehq/tinkle-kafka-events/proto/muc/v1;tinkleeventsmucv1";
+option java_multiple_files = true;
+option java_package = "me.tinkle.events.muc.v1";
+
+message MessageToBotEvent {
+  // Snowflake ID of the bot that the message was addressed to.
+  int64 bot_id = 1;
+
+  // Snowflake ID of the user who sent the message.
+  int64 sender_user_id = 2;
+
+  // Snowflake ID of the chat (DM or group) in which the message was
+  // sent.
+  int64 chat_id = 3;
+
+  // Snowflake ID of the message.
+  int64 message_id = 4;
+
+  // Type tag describing the message body. Examples: "text", "photo",
+  // "document", "voice", "video", "sticker", "location", "contact",
+  // "poll".
+  string message_type = 5;
+
+  // Raw, type-specific message body. Encoding and schema are
+  // determined by `message_type`; consumers dispatch on the type tag
+  // before decoding.
+  bytes payload = 6;
+
+  // Wall-clock instant at which the message was created.
+  google.protobuf.Timestamp created_at = 7;
+}

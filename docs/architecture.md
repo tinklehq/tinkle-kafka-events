@@ -13,14 +13,18 @@
 |  Business logic      |--->|  outbox table       |--->|  Kafka topic  |--->|  CDC consumer        |
 |  + outbox insert     |    |  (same TX)          |    |               |    |  + handler           |
 +----------------------+    +---------------------+    +---------------+    +----------------------+
-          |                                                                    ^
-          | produces                                                           | validates against
-          v                                                                    |
+          |                       |                          |                          ^
+          | produces              | schema-                  | schema-ID lookup         | validates against
+          v                       | registry                 v                          |
+     +------------------------------------------------------------------+       Confluent SR
+     |              tinkle-kafka-events  (this repository)              |       (runtime)
+     |  Protobuf `.proto` schemas (Buf-managed), published to the        |---------------^
+     |  Buf Schema Registry on every merge to main:                      |
+     |  buf.build/tinklecorp/tinkle-kafka-events                         |
      +------------------------------------------------------------------+
-     |              tinkle-kafka-events  (this repository)              |
-     |  Protobuf `.proto` schemas (Buf-managed) registered with          |
-     |  Confluent Schema Registry in `schemaType: PROTOBUF` mode        |
-     +------------------------------------------------------------------+
+     The BSR is the source of truth. The deploy pipeline syncs the
+     BSR-published schema into Confluent SR (the runtime registry
+     that producers and consumers consult on every produce/consume).
 ```
 
 ## Data flow
@@ -33,9 +37,16 @@
    Schema-Registry-resolved Protobuf schema (via
    `KafkaProtobufDeserializer` / `confluent-kafka-go`'s `ProtoDeserializer`),
    and applies the change to its local projection.
-4. **Schema registry** acts as the contract enforcer. Compatibility is
-   checked at publish time; a producer cannot push a schema that would
-   break a registered consumer.
+4. **Schema registries** act as the contract enforcers. There are two:
+   * **Buf Schema Registry (BSR)** — the source of truth for the
+     `.proto` schemas in this repo. Every merge to `main` triggers a
+     `buf push` from CI; consumers `go get` the BSR-published SDK.
+   * **Confluent Schema Registry** — the runtime registry that
+     producers and consumers consult on every produce/consume. The
+     deploy pipeline syncs BSR-published schemas into Confluent SR.
+   Compatibility is checked at publish time in both registries; a
+   producer cannot push a schema that would break a registered
+   consumer.
 
 ## Topic topology
 
@@ -64,7 +75,7 @@ and the recommended setting for most deployments):
 
 | Kafka topic               | Subject                       | Schema(s) registered                                |
 | ------------------------- | ----------------------------- | --------------------------------------------------- |
-| `outbox.user.event`       | `outbox.user.event-value`     | `me.tinkle.events.common.v1.Envelope` (the wrapper) |
+| `outbox.user.event`       | `outbox.user.event-value`     | `tinkle.events.common.v1.Envelope` (the wrapper) |
 | `outbox.roster.event`     | `outbox.roster.event-value`   | `Envelope`                                          |
 | `outbox.privacy.call`     | `outbox.privacy.call-value`   | `Envelope`                                          |
 | ...                       | ...                           | ...                                                 |
@@ -82,8 +93,12 @@ every Kafka CDC event in the Tinkle stack. It provides:
 
 * A **polyglot** contract for non-Go consumers (Elixir chat-node,
   Java/Kotlin mobile gateways, Python analytics, future Rust services).
+* A **BSR-published** contract: every merge to `main` triggers a
+  `buf push` to `buf.build/tinklecorp/tinkle-kafka-events`; consumers
+  `go get` the BSR-published Go SDK, no local codegen needed.
 * A **schema-registry-friendly** format with native compatibility
-  checking, code generation, and runtime validation.
+  checking, code generation, and runtime validation in both the BSR
+  and the Confluent SR.
 * A **public, audit-friendly** record of the data contract — `.proto`
   files are textual, easy to diff and review in PRs.
 * A **Buf-managed** module: `buf lint` enforces the `STANDARD` style
@@ -92,6 +107,5 @@ every Kafka CDC event in the Tinkle stack. It provides:
 
 The repo is deliberately standalone: nothing here references or
 depends on any other repository. Each `.proto` is a self-contained
-contract, registered with Confluent Schema Registry in `PROTOBUF` mode
-and consumed by any service that wants to read or write the
-corresponding topic.
+contract, published to the BSR and synced from there into the
+Confluent Schema Registry.

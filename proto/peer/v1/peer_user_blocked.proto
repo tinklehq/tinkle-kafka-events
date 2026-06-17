@@ -1,0 +1,25 @@
+// Published by chat-service (peer) when a user blocks another user.
+// Consumers should drop any in-flight messages between the two users
+// and add the target to the owner's blocklist projection.
+// Event type discriminator: "peer_blocked".
+// Topic: outbox.peer.event. Aggregate: event.
+syntax = "proto3";
+
+package tinkle.events.peer.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/tinklehq/tinkle-kafka-events/proto/peer/v1;tinkleeventspeerv1";
+option java_multiple_files = true;
+option java_package = "me.tinkle.events.peer.v1";
+
+message PeerUserBlockedEvent {
+  // Snowflake ID of the user who initiated the block.
+  int64 owner_user_id = 1;
+
+  // Snowflake ID of the user being blocked.
+  int64 target_user_id = 2;
+
+  // Wall-clock instant at which the block occurred.
+  google.protobuf.Timestamp created_at = 3;
+}

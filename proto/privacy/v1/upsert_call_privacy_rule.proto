@@ -1,0 +1,24 @@
+// Published by privacy-service when a call privacy rule override is
+// created or updated.
+// Event type discriminator: "upsert_call_privacy_rule".
+// Topic: outbox.privacy.call. Aggregate: call.
+syntax = "proto3";
+
+package tinkle.events.privacy.v1;
+
+import "common/v1/privacy_rule_action.proto";
+
+option go_package = "github.com/tinklehq/tinkle-kafka-events/proto/privacy/v1;tinkleeventsprivacyv1";
+option java_multiple_files = true;
+option java_package = "me.tinkle.events.privacy.v1";
+
+message UpsertCallPrivacyRuleEvent {
+  // Snowflake ID of the rule owner.
+  int64 user_id = 1;
+
+  // Snowflake ID of the rule target.
+  int64 target_user_id = 2;
+
+  // Allow or deny action for this target.
+  tinkle.events.common.v1.PrivacyRuleAction action = 3;
+}

@@ -1,0 +1,52 @@
+name: buf-ci
+
+# Validates the proto source and publishes the named module to the
+# Buf Schema Registry (https://buf.build/tinklecorp/tinkle-kafka-events).
+#
+# The BSR serves Go SDKs to consumers directly, so no per-language
+# build jobs run here. Consumers:
+#   go: go get buf.build/gen/go/tinklecorp/tinkle-kafka-events/protocolbuffers/go
+#   go: go get buf.build/gen/go/tinklecorp/tinkle-kafka-events/grpc/go
+#
+# Required secret: BUF_TOKEN (a BSR API token for the tinklecorp
+# org). It must be set BEFORE the first merge to main, otherwise
+# the initial `buf push` will fail and the BSR module will not be
+# created. The action auto-creates the BSR repo on first push;
+# `push_create_visibility: public` makes that explicit so the repo
+# is created with the same visibility as a subsequent explicit
+# `buf push` would produce.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'proto/**'
+      - 'buf.yaml'
+      - 'buf.lock'
+      - 'LICENSE'
+      - 'README.md'
+  pull_request:
+    branches: [main]
+    # Include `labeled` and `unlabeled` so the action re-runs (and
+    # skips the `breaking` step) when a maintainer applies the
+    # `buf skip breaking` label to flag an intentional structural
+    # migration. GitHub's default pull_request types are
+    # [opened, synchronize, reopened] — adding the two label types
+    # here is what wires the action to the label convention.
+    # See https://docs.buf.build/bsr/ci-cd/github-actions#skip-breaking-change-detection
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+  delete:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  buf:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: bufbuild/buf-action@v1
+        with:
+          token: ${{ secrets.BUF_TOKEN }}
+          push_create_visibility: public

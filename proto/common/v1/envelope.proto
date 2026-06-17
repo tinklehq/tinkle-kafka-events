@@ -1,0 +1,74 @@
+// Envelope wraps every event published to a Tinkle Kafka topic.
+//
+// The envelope carries routing, ordering, tracing, and provenance
+// metadata so that infrastructure (connectors, dead-letter routers,
+// observability tools) can reason about the message without
+// understanding the concrete payload. The actual event payload lives
+// in the `payload` field, encoded according to the Protobuf message
+// whose fully-qualified name is recorded in `payload_schema`.
+//
+// Decoding the payload requires loading the referenced FileDescriptor
+// from the Schema Registry (or this repository).
+syntax = "proto3";
+
+package tinkle.events.common.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/tinklehq/tinkle-kafka-events/proto/common/v1;tinkleeventscommonv1";
+option java_multiple_files = true;
+option java_package = "me.tinkle.events.common.v1";
+
+message Envelope {
+  // Globally unique identifier for this event instance. UUIDv7 is
+  // RECOMMENDED (sortable, time-ordered). Used for idempotency,
+  // deduplication, and event-tracing.
+  string event_id = 1;
+
+  // Discriminator for the concrete payload message.
+  // Lowercase snake_case. Examples: "user_created",
+  // "peer_user_blocked", "upsert_call_privacy". One value per event
+  // type; see the per-service README under proto/ for the full list.
+  string event_type = 2;
+
+  // Debezium outbox event router discriminator. Examples: "event",
+  // "message", "call", "presence". Used as the Kafka topic routing
+  // key together with the topic constant.
+  string aggregate_type = 3;
+
+  // Aggregate identifier — the value used as the Kafka message key.
+  // All events with the same aggregate_id are guaranteed to land on
+  // the same partition, preserving per-entity ordering. For example,
+  // the owner_user_id for a roster event, or the chat_id for a chat
+  // event.
+  string aggregate_id = 4;
+
+  // Wall-clock instant at which the event was produced. Use this for
+  // observability; for canonical event time use the payload's own
+  // timestamp field.
+  google.protobuf.Timestamp occurred_at = 5;
+
+  // Version of the envelope schema. Currently always 1. Bumped only
+  // on breaking changes to the envelope itself (extremely rare).
+  int32 schema_version = 6;
+
+  // Fully-qualified name of the Protobuf message contained in
+  // `payload` (e.g. "tinkle.events.user.v1.UserCreatedEvent").
+  // This allows consumers to look up the exact FileDescriptor from
+  // Schema Registry without consulting event_type.
+  string payload_schema = 7;
+
+  // W3C Trace Context 'traceparent' header. Populated by the producer
+  // if W3C tracing is enabled; empty string otherwise. Carried
+  // verbatim through Kafka for end-to-end distributed tracing.
+  string traceparent = 8;
+
+  // Logical producer name (e.g. "user-service", "roster-service").
+  // Empty string when unset. Mainly useful for log/metric attribution
+  // when a single topic hosts events from multiple producers.
+  string producer = 9;
+
+  // Protobuf-encoded concrete event. Decode using the message
+  // described by `payload_schema`.
+  bytes payload = 10;
+}

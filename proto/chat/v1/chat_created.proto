@@ -1,0 +1,21 @@
+// Published by chat-service (muc) when a new chat (1:1, group, or
+// broadcast) is created.
+// Event type discriminator: "chat_created".
+// Topic: outbox.chat.event. Aggregate: event.
+syntax = "proto3";
+
+package tinkle.events.chat.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/tinklehq/tinkle-kafka-events/proto/chat/v1;tinkleeventschatv1";
+option java_multiple_files = true;
+option java_package = "me.tinkle.events.chat.v1";
+
+message ChatCreatedEvent {
+  // Snowflake ID of the newly created chat.
+  int64 chat_id = 1;
+
+  // Wall-clock instant at which the chat was created.
+  google.protobuf.Timestamp created_at = 2;
+}

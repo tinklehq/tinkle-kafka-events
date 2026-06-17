@@ -1,0 +1,37 @@
+// Published by user-service when a user account is deleted (hard
+// delete). Consumers should use this to clean up user-related
+// projections and revoke any outstanding tokens.
+// Event type discriminator: "user_deleted". Topic: outbox.user.event.
+// Aggregate: event.
+//
+// Note: the `created_at` field below is mis-named in the original
+// Avro contract; it actually carries the deletion instant. The name
+// is preserved here for byte-for-byte compatibility with the existing
+// consumer fleet. New consumers should treat it as the deletion
+// timestamp; new code may use the envelope's `occurred_at` for the
+// same value.
+syntax = "proto3";
+
+package tinkle.events.user.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/tinklehq/tinkle-kafka-events/proto/user/v1;tinkleeventsuserv1";
+option java_multiple_files = true;
+option java_package = "me.tinkle.events.user.v1";
+
+message UserDeletedEvent {
+  // Snowflake ID of the deleted user.
+  int64 user_id = 1;
+
+  // Wall-clock instant at which the user was deleted. Named
+  // `created_at` for compatibility with the original Avro contract
+  // (see file-level comment); the semantic value is the deletion
+  // instant.
+  google.protobuf.Timestamp created_at = 2;
+
+  // Optional phone number in E.164 format. Empty string in the rare
+  // case the user had no phone. Consumers should revoke any tokens
+  // or sessions keyed on this phone number.
+  optional string phone_number = 3;
+}
