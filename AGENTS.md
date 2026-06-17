@@ -73,7 +73,7 @@ stubs stay in sync.
 
 ```go
 import (
-    envelope "buf.build/gen/go/tinklecorp/tinkle-kafka-events/protocolbuffers/go/me/tinkle/events/common/v1;eventscommonv1"
+    envelope "buf.build/gen/go/tinklecorp/tinkle-kafka-events/protocolbuffers/go/tinkle/events/common/v1;tinkleeventscommonv1"
 )
 ```
 
@@ -82,8 +82,8 @@ import (
 1. **Edit `.proto` files in place under `proto/<service>/v1/`.** This
    repo is the only place the contract is maintained. There is no
    mirror from any other repo — proto changes land here directly.
-   Keep the Protobuf `package me.tinkle.events.<service>.v1;` and
-   the `option go_package = "github.com/tinklehq/tinkle-kafka-events/proto/<service>/v1;events<service>v1";`
+   Keep the Protobuf `package tinkle.events.<service>.v1;` and
+   the `option go_package = "github.com/tinklehq/tinkle-kafka-events/proto/<service>/v1;tinkleevents<service>v1";`
    line consistent across all files in the package.
 2. **`buf push` is automatic on merge to `main`.** The `buf-ci.yaml`
    workflow uses `bufbuild/buf-action@v1`; on push to `main` it
@@ -105,14 +105,14 @@ import (
    `buf skip breaking` label to the PR (Issues → Labels in the repo
    settings) — the action checks for the label and skips the
    breaking step. For permanent wire breaks, add a new package path
-   (`me.tinkle.events.<service>.v2/`) rather than mutating the
+   (`tinkle.events.<service>.v2/`) rather than mutating the
    existing `v1/` files.
 6. **No `buf generate`, no `buf.gen.yaml`.** Code generation
    happens on the BSR. A `buf.gen.yaml` only exists if you need
    to run `buf generate` against a third-party plugin locally;
    in this repo, there is none.
 7. **`PACKAGE_DIRECTORY_MATCH` is intentionally excepted.** The
-   Protobuf packages are `me.tinkle.events.<service>.v1` but the
+   Protobuf packages are `tinkle.events.<service>.v1` but the
    directories are `proto/<service>/v1/`. This is the same exception
    `tinklehq/tinkle-proto` makes — the path-flattening is for
    ergonomic review; the package name is the wire contract and

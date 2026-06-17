@@ -4,13 +4,13 @@
 // Topic: outbox.roster.event. Aggregate: event.
 syntax = "proto3";
 
-package me.tinkle.events.roster.v1;
+package tinkle.events.roster.v1;
 
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/tinklehq/tinkle-kafka-events/proto/roster/v1;eventsrosterv1";
+option go_package = "github.com/tinklehq/tinkle-kafka-events/proto/roster/v1;tinkleeventsrosterv1";
 option java_multiple_files = true;
-option java_package = "com.tinklehq.kafkaevents.me.tinkle.events.roster.v1";
+option java_package = "me.tinkle.events.roster.v1";
 
 message RosterContactDeletedEvent {
   // Snowflake ID of the roster owner (the user who removed the

@@ -75,7 +75,7 @@ and the recommended setting for most deployments):
 
 | Kafka topic               | Subject                       | Schema(s) registered                                |
 | ------------------------- | ----------------------------- | --------------------------------------------------- |
-| `outbox.user.event`       | `outbox.user.event-value`     | `me.tinkle.events.common.v1.Envelope` (the wrapper) |
+| `outbox.user.event`       | `outbox.user.event-value`     | `tinkle.events.common.v1.Envelope` (the wrapper) |
 | `outbox.roster.event`     | `outbox.roster.event-value`   | `Envelope`                                          |
 | `outbox.privacy.call`     | `outbox.privacy.call-value`   | `Envelope`                                          |
 | ...                       | ...                           | ...                                                 |

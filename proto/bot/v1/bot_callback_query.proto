@@ -4,13 +4,13 @@
 // Topic: outbox.bot.event. Aggregate: event.
 syntax = "proto3";
 
-package me.tinkle.events.bot.v1;
+package tinkle.events.bot.v1;
 
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/tinklehq/tinkle-kafka-events/proto/bot/v1;eventsbotv1";
+option go_package = "github.com/tinklehq/tinkle-kafka-events/proto/bot/v1;tinkleeventsbotv1";
 option java_multiple_files = true;
-option java_package = "com.tinklehq.kafkaevents.me.tinkle.events.bot.v1";
+option java_package = "me.tinkle.events.bot.v1";
 
 message BotCallbackQueryEvent {
   // Snowflake ID of the bot that owns the inline keyboard.

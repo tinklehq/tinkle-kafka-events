@@ -4,13 +4,13 @@
 // Topic: outbox.chat.event. Aggregate: event.
 syntax = "proto3";
 
-package me.tinkle.events.chat.v1;
+package tinkle.events.chat.v1;
 
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/tinklehq/tinkle-kafka-events/proto/chat/v1;eventschatv1";
+option go_package = "github.com/tinklehq/tinkle-kafka-events/proto/chat/v1;tinkleeventschatv1";
 option java_multiple_files = true;
-option java_package = "com.tinklehq.kafkaevents.me.tinkle.events.chat.v1";
+option java_package = "me.tinkle.events.chat.v1";
 
 message ChatCreatedEvent {
   // Snowflake ID of the newly created chat.

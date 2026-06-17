@@ -3,13 +3,13 @@
 // Event type discriminator: "message_revoked". Aggregate: event.
 syntax = "proto3";
 
-package me.tinkle.events.message.v1;
+package tinkle.events.message.v1;
 
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/tinklehq/tinkle-kafka-events/proto/message/v1;eventsmessagev1";
+option go_package = "github.com/tinklehq/tinkle-kafka-events/proto/message/v1;tinkleeventsmessagev1";
 option java_multiple_files = true;
-option java_package = "com.tinklehq.kafkaevents.me.tinkle.events.message.v1";
+option java_package = "me.tinkle.events.message.v1";
 
 message MessageRevokedEvent {
   // Snowflake peer ID of the original sender (only they can revoke).

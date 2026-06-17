@@ -4,11 +4,11 @@
 // Topic: outbox.privacy.chat_invite. Aggregate: chat_invite.
 syntax = "proto3";
 
-package me.tinkle.events.privacy.v1;
+package tinkle.events.privacy.v1;
 
-option go_package = "github.com/tinklehq/tinkle-kafka-events/proto/privacy/v1;eventsprivacyv1";
+option go_package = "github.com/tinklehq/tinkle-kafka-events/proto/privacy/v1;tinkleeventsprivacyv1";
 option java_multiple_files = true;
-option java_package = "com.tinklehq.kafkaevents.me.tinkle.events.privacy.v1";
+option java_package = "me.tinkle.events.privacy.v1";
 
 message RemoveChatInvitePrivacyRuleEvent {
   // Snowflake ID of the rule owner.

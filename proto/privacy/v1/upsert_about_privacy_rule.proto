@@ -4,13 +4,13 @@
 // Topic: outbox.privacy.about. Aggregate: about.
 syntax = "proto3";
 
-package me.tinkle.events.privacy.v1;
+package tinkle.events.privacy.v1;
 
 import "common/v1/privacy_rule_action.proto";
 
-option go_package = "github.com/tinklehq/tinkle-kafka-events/proto/privacy/v1;eventsprivacyv1";
+option go_package = "github.com/tinklehq/tinkle-kafka-events/proto/privacy/v1;tinkleeventsprivacyv1";
 option java_multiple_files = true;
-option java_package = "com.tinklehq.kafkaevents.me.tinkle.events.privacy.v1";
+option java_package = "me.tinkle.events.privacy.v1";
 
 message UpsertAboutPrivacyRuleEvent {
   // Snowflake ID of the rule owner.
@@ -20,5 +20,5 @@ message UpsertAboutPrivacyRuleEvent {
   int64 target_user_id = 2;
 
   // Allow or deny action for this target.
-  me.tinkle.events.common.v1.PrivacyRuleAction action = 3;
+  tinkle.events.common.v1.PrivacyRuleAction action = 3;
 }

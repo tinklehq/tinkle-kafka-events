@@ -69,7 +69,7 @@ strictest — catches anything that would break generated code). For
 intentional breaks, add the `buf skip breaking` label to the PR
 (Issues → Labels in the repo settings); the action checks for the
 label and skips the breaking step. For permanent breaks, add a new
-package path (`me.tinkle.events.<service>.v2/`) rather than
+package path (`tinkle.events.<service>.v2/`) rather than
 mutating the existing `v1/` files.
 
 ## Common tasks
@@ -78,7 +78,7 @@ mutating the existing `v1/` files.
 |---|---|
 | Add a new event | `tinklehq/tinkle-kafka-events` — open a PR adding `<event>.proto` under `proto/<service>/v1/` |
 | Add a new field to an existing event | same — keep `BACKWARD_TRANSITIVE` (use a fresh tag number) |
-| Bump an event to a breaking new version | new package `me.tinkle.events.<service>.v2/...` under `proto/<service>/v2/` |
+| Bump an event to a breaking new version | new package `tinkle.events.<service>.v2/...` under `proto/<service>/v2/` |
 | Rename a field | use `[deprecated = true]` on the old field, add the new one with a new tag, do not rename in place |
 | Add a new language SDK | request it on the BSR; no repo change needed unless you also want a `buf.gen.yaml` for local codegen |
 | Change BSR module ownership / name | `buf.yaml` (`modules[0].name`) — coord with the tinklecorp BSR org admins |

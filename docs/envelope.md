@@ -10,7 +10,7 @@
 ```proto
 syntax = "proto3";
 
-package me.tinkle.events.common.v1;
+package tinkle.events.common.v1;
 
 import "google/protobuf/timestamp.proto";
 
@@ -118,7 +118,7 @@ choice.
    * `occurred_at`  = `Timestamp.now()` (Google's well-known type)
    * `schema_version` = 1 (or the schema's major version)
    * `payload_schema` = fully-qualified message name (e.g.
-     `me.tinkle.events.user.v1.UserCreatedEvent`)
+     `tinkle.events.user.v1.UserCreatedEvent`)
    * `traceparent`  = current span's traceparent, or `""` if none
    * `producer`     = the producing service name
    * `payload`      = the Protobuf-encoded concrete event

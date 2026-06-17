@@ -17,7 +17,7 @@ subject = <topic>-key        // for message keys (we use STRING keys, not schema
 
 `RecordNameStrategy` derives the subject from the **fully-qualified
 record name**. With our envelope pattern, every topic would share the
-subject `me.tinkle.events.common.v1.Envelope-value` — which means
+subject `tinkle.events.common.v1.Envelope-value` — which means
 **every topic's schema would be in the same subject, and any change
 would be compared against every other topic's payload**. That's an
 operational nightmare.
@@ -37,7 +37,7 @@ extra dimension is unnecessary.
 
 | Topic                       | Subject                       | Schemas (current)                                                                 |
 | --------------------------- | ----------------------------- | --------------------------------------------------------------------------------- |
-| `outbox.user.event`         | `outbox.user.event-value`     | `me.tinkle.events.common.v1.Envelope` (record wraps the concrete event)          |
+| `outbox.user.event`         | `outbox.user.event-value`     | `tinkle.events.common.v1.Envelope` (record wraps the concrete event)          |
 | `outbox.chat.event`         | `outbox.chat.event-value`     | `Envelope`                                                                        |
 | `outbox.roster.event`       | `outbox.roster.event-value`   | `Envelope`                                                                        |
 | `outbox.peer.event`         | `outbox.peer.event-value`     | `Envelope`                                                                        |
@@ -64,9 +64,9 @@ any consumer (the same way as the Avro era).
 2. Read the magic byte + schema-ID prefix to get the Envelope schema
    (which is always the latest version of `<topic>-value`).
 3. Decode the Envelope. Read `payload_schema`
-   (e.g. `me.tinkle.events.user.v1.UserCreatedEvent`).
+   (e.g. `tinkle.events.user.v1.UserCreatedEvent`).
 4. Look up the Schema Registry subject for that FQN (e.g.
-   `me.tinkle.events.user.v1.UserCreatedEvent`).
+   `tinkle.events.user.v1.UserCreatedEvent`).
 5. Fetch the latest version of that subject and decode `payload`.
 
 Step 4 is what makes the envelope pattern robust against `oneof`
@@ -98,14 +98,14 @@ just look up by name.
 ### Bumping an event to a breaking new version
 
 1. Bump the schema's package to `v2`:
-   `me.tinkle.events.user.v2.UserCreatedEvent`.
+   `tinkle.events.user.v2.UserCreatedEvent`.
 2. Create a sibling directory `proto/user/v2/user_created.proto`.
 3. Open a PR with the `buf skip breaking` label (the directory
    rename is a structural change that `buf breaking` flags as
    "files moved", which is not a wire-compat break — but `buf
    breaking` can't tell the difference).
 4. Merge to `main`; the BSR push from CI publishes the new
-   `me.tinkle.events.user.v2` schema as a new module commit.
+   `tinkle.events.user.v2` schema as a new module commit.
 5. The deploy pipeline registers the new schema under the **same
    subject** as v1 (`outbox.user.event-value`); Confluent SR will
    store both versions of the FileDescriptor.

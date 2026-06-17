@@ -3,16 +3,16 @@
 // the target is allowed or denied to see the owner's setting.
 //
 // Owned by the privacy-service event contract; lives under
-// proto/me/tinkle/events/common/v1/ only so other packages can
+// proto/common/v1/ only so other packages can
 // reference it without a circular import. The package is
-// me.tinkle.events.common.v1 intentionally.
+// tinkle.events.common.v1 intentionally.
 syntax = "proto3";
 
-package me.tinkle.events.common.v1;
+package tinkle.events.common.v1;
 
-option go_package = "github.com/tinklehq/tinkle-kafka-events/proto/common/v1;eventscommonv1";
+option go_package = "github.com/tinklehq/tinkle-kafka-events/proto/common/v1;tinkleeventscommonv1";
 option java_multiple_files = true;
-option java_package = "com.tinklehq.kafkaevents.me.tinkle.events.common.v1";
+option java_package = "me.tinkle.events.common.v1";
 
 enum PrivacyRuleAction {
   // Default zero value. Used when a privacy rule has not been

@@ -131,7 +131,7 @@ stubs stay in sync.
 
 ```go
 import (
-    envelope "buf.build/gen/go/tinklecorp/tinkle-kafka-events/protocolbuffers/go/me/tinkle/events/common/v1;eventscommonv1"
+    envelope "buf.build/gen/go/tinklecorp/tinkle-kafka-events/protocolbuffers/go/tinkle/events/common/v1;tinkleeventscommonv1"
 )
 ```
 
@@ -206,8 +206,8 @@ ruleset.
 Schemas are versioned in the **Protobuf package**, not the file name:
 
 ```
-package me.tinkle.events.<service>.v1;
-package me.tinkle.events.<service>.v2;  // breaking → new v2 files under same subject
+package tinkle.events.<service>.v1;
+package tinkle.events.<service>.v2;  // breaking → new v2 files under same subject
 ```
 
 Bumping `v1` → `v2` is a **breaking** change. The new version is
@@ -219,8 +219,8 @@ consumers pin to a specific version explicitly.
 
 1. Branch from `main` using a `feature/<short-desc>` naming convention.
 2. Add or modify `.proto` files in the appropriate
-   `proto/<service>/v1/` directory. Keep the Protobuf `package me.tinkle.events.<service>.v1;`
-   and the `option go_package = "github.com/tinklehq/tinkle-kafka-events/proto/<service>/v1;events<service>v1";`
+   `proto/<service>/v1/` directory. Keep the Protobuf `package tinkle.events.<service>.v1;`
+   and the `option go_package = "github.com/tinklehq/tinkle-kafka-events/proto/<service>/v1;tinkleevents<service>v1";`
    line consistent across all files in the package.
 3. Run `buf format -w` and `buf lint` locally; the `buf-ci.yaml`
    action will run them on every PR and fail the build on findings.

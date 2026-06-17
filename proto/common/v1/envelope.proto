@@ -11,13 +11,13 @@
 // from the Schema Registry (or this repository).
 syntax = "proto3";
 
-package me.tinkle.events.common.v1;
+package tinkle.events.common.v1;
 
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/tinklehq/tinkle-kafka-events/proto/common/v1;eventscommonv1";
+option go_package = "github.com/tinklehq/tinkle-kafka-events/proto/common/v1;tinkleeventscommonv1";
 option java_multiple_files = true;
-option java_package = "com.tinklehq.kafkaevents.me.tinkle.events.common.v1";
+option java_package = "me.tinkle.events.common.v1";
 
 message Envelope {
   // Globally unique identifier for this event instance. UUIDv7 is
@@ -53,7 +53,7 @@ message Envelope {
   int32 schema_version = 6;
 
   // Fully-qualified name of the Protobuf message contained in
-  // `payload` (e.g. "me.tinkle.events.user.v1.UserCreatedEvent").
+  // `payload` (e.g. "tinkle.events.user.v1.UserCreatedEvent").
   // This allows consumers to look up the exact FileDescriptor from
   // Schema Registry without consulting event_type.
   string payload_schema = 7;

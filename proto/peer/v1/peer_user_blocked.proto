@@ -5,13 +5,13 @@
 // Topic: outbox.peer.event. Aggregate: event.
 syntax = "proto3";
 
-package me.tinkle.events.peer.v1;
+package tinkle.events.peer.v1;
 
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/tinklehq/tinkle-kafka-events/proto/peer/v1;eventspeerv1";
+option go_package = "github.com/tinklehq/tinkle-kafka-events/proto/peer/v1;tinkleeventspeerv1";
 option java_multiple_files = true;
-option java_package = "com.tinklehq.kafkaevents.me.tinkle.events.peer.v1";
+option java_package = "me.tinkle.events.peer.v1";
 
 message PeerUserBlockedEvent {
   // Snowflake ID of the user who initiated the block.

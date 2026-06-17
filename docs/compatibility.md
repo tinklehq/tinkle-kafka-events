@@ -117,7 +117,7 @@ the encoding for a regular field at the same tag.
 When a non-`BACKWARD_TRANSITIVE`-compatible change is unavoidable:
 
 1. Bump the schema's package to `v2`:
-   `me.tinkle.events.user.v2.UserCreatedEvent`.
+   `tinkle.events.user.v2.UserCreatedEvent`.
 2. Register it under a **new subject**:
    `outbox.user.event-value` version `v2` (a separate FileDescriptor
    version under the same subject).

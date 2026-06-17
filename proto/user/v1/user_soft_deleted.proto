@@ -5,13 +5,13 @@
 // Topic: outbox.user.event. Aggregate: event.
 syntax = "proto3";
 
-package me.tinkle.events.user.v1;
+package tinkle.events.user.v1;
 
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/tinklehq/tinkle-kafka-events/proto/user/v1;eventsuserv1";
+option go_package = "github.com/tinklehq/tinkle-kafka-events/proto/user/v1;tinkleeventsuserv1";
 option java_multiple_files = true;
-option java_package = "com.tinklehq.kafkaevents.me.tinkle.events.user.v1";
+option java_package = "me.tinkle.events.user.v1";
 
 message UserSoftDeletedEvent {
   // Snowflake ID of the soft-deleted user.
