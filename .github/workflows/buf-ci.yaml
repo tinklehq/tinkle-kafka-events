@@ -27,6 +27,14 @@ on:
       - 'README.md'
   pull_request:
     branches: [main]
+    # Include `labeled` and `unlabeled` so the action re-runs (and
+    # skips the `breaking` step) when a maintainer applies the
+    # `buf skip breaking` label to flag an intentional structural
+    # migration. GitHub's default pull_request types are
+    # [opened, synchronize, reopened] — adding the two label types
+    # here is what wires the action to the label convention.
+    # See https://docs.buf.build/bsr/ci-cd/github-actions#skip-breaking-change-detection
+    types: [opened, synchronize, reopened, labeled, unlabeled]
   delete:
 
 permissions:
