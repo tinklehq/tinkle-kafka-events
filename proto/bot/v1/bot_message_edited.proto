@@ -1,0 +1,35 @@
+// Published by bot-service when a bot edits a previously sent
+// message.
+// Event type discriminator: "bot_message_edited".
+// Topic: outbox.bot.event. Aggregate: event.
+syntax = "proto3";
+
+package me.tinkle.events.bot.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/tinklehq/tinkle-kafka-events/proto/bot/v1;eventsbotv1";
+option java_multiple_files = true;
+option java_package = "com.tinklehq.kafkaevents.me.tinkle.events.bot.v1";
+
+message BotMessageEditedEvent {
+  // Snowflake ID of the bot that owns the message.
+  int64 bot_id = 1;
+
+  // Snowflake ID of the chat containing the message.
+  int64 chat_id = 2;
+
+  // Snowflake ID of the message that was edited.
+  int64 message_id = 3;
+
+  // Type tag describing the updated message body.
+  string message_type = 4;
+
+  // Updated message body. Encoding and schema are determined by
+  // `message_type`; consumers dispatch on the type tag before
+  // decoding.
+  bytes payload = 5;
+
+  // Wall-clock instant at which the edit was applied.
+  google.protobuf.Timestamp edited_at = 6;
+}

@@ -1,0 +1,27 @@
+// Published by roster-service when multiple contacts are added in a
+// single bulk operation (ImportRoster, ImportRosterCompressed).
+// Contains ONLY contacts with resolved contact_user_id (> 0).
+// Scoped to a single owner — one event per owner per batch
+// operation.
+// Event type discriminator: "roster_contact_batch_added".
+// Topic: outbox.roster.event. Aggregate: event.
+syntax = "proto3";
+
+package me.tinkle.events.roster.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/tinklehq/tinkle-kafka-events/proto/roster/v1;eventsrosterv1";
+option java_multiple_files = true;
+option java_package = "com.tinklehq.kafkaevents.me.tinkle.events.roster.v1";
+
+message RosterContactBatchAddedEvent {
+  // Snowflake ID of the roster owner.
+  int64 owner_user_id = 1;
+
+  // Snowflake IDs of the contacts that were added in this batch.
+  repeated int64 contact_user_ids = 2;
+
+  // Wall-clock instant at which the batch import completed.
+  google.protobuf.Timestamp created_at = 3;
+}

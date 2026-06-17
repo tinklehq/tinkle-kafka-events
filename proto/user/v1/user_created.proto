@@ -1,0 +1,28 @@
+// Published by user-service when a new user account is created.
+// Consumers should use this to initialise user-related projections
+// (roster, presence, contacts, etc.).
+// Event type discriminator: "user_created". Topic: outbox.user.event.
+// Aggregate: event.
+syntax = "proto3";
+
+package me.tinkle.events.user.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/tinklehq/tinkle-kafka-events/proto/user/v1;eventsuserv1";
+option java_multiple_files = true;
+option java_package = "com.tinklehq.kafkaevents.me.tinkle.events.user.v1";
+
+message UserCreatedEvent {
+  // Snowflake ID of the newly created user.
+  int64 user_id = 1;
+
+  // Wall-clock instant at which the user was created.
+  google.protobuf.Timestamp created_at = 2;
+
+  // Optional phone number in E.164 format (e.g. +14155552671).
+  // Empty string (the proto3 default) when the user registered
+  // without a phone number. Useful for downstream phone-based
+  // lookups and for cross-referencing identity events.
+  optional string phone_number = 3;
+}

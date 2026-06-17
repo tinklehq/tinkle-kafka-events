@@ -78,35 +78,43 @@ just look up by name.
 ### Adding a new event type to an existing topic
 
 1. Add the new `.proto` under the appropriate
-   `proto/me/tinkle/events/<service>/v1/` directory.
-2. Run `./scripts/validate.sh` locally to confirm it parses.
-3. Open a PR. CI runs `buf lint`, `buf breaking`, and registers the
-   candidate schema against the staging Schema Registry; if it's
-   incompatible with the latest version the PR fails.
+   `proto/<service>/v1/` directory.
+2. Run `buf format -w` and `buf lint` locally to confirm it parses
+   and is style-clean.
+3. Open a PR. CI runs `buf lint`, `buf breaking`; if the new schema
+   is wire-incompatible with the latest version, the PR fails.
 
 ### Adding a new topic
 
 1. Pick a topic name (e.g. `outbox.<service>.<aggregate>`).
 2. Author the per-event `.proto` files under a new
-   `proto/me/tinkle/events/<service>/v1/` directory.
-3. Register the Envelope schema under `<topic>-value` in the
-   registry. This will auto-create the subject.
+   `proto/<service>/v1/` directory.
+3. Merge to `main`; the BSR push from CI publishes the new schema.
+   The deploy pipeline syncs the BSR-published schema into the
+   Confluent SR subject `<topic>-value` and auto-creates the
+   subject.
 4. Update producer and consumer code to use the new topic.
 
 ### Bumping an event to a breaking new version
 
 1. Bump the schema's package to `v2`:
    `me.tinkle.events.user.v2.UserCreatedEvent`.
-2. Create a sibling directory
-   `proto/me/tinkle/events/user/v2/user_created.proto`.
-3. Register it under the **same subject** as v1
-   (`outbox.user.event-value`); Schema Registry will store both
-   versions of the FileDescriptor.
-4. Producers dual-write to **both** `v1` and `v2` for one release
+2. Create a sibling directory `proto/user/v2/user_created.proto`.
+3. Open a PR with the `buf skip breaking` label (the directory
+   rename is a structural change that `buf breaking` flags as
+   "files moved", which is not a wire-compat break — but `buf
+   breaking` can't tell the difference).
+4. Merge to `main`; the BSR push from CI publishes the new
+   `me.tinkle.events.user.v2` schema as a new module commit.
+5. The deploy pipeline registers the new schema under the **same
+   subject** as v1 (`outbox.user.event-value`); Confluent SR will
+   store both versions of the FileDescriptor.
+6. Producers dual-write to **both** `v1` and `v2` for one release
    window.
-5. Consumers migrate to `v2`.
-6. Producers stop dual-writing.
-7. The `v1` package is **frozen** (still readable by old consumers for
-   replay), but not evolved further.
-8. After a defined grace period (typically one quarter), the `v1`
-   version of the subject is marked `deleted: true` in the registry.
+7. Consumers migrate to `v2`.
+8. Producers stop dual-writing.
+9. The `v1` package is **frozen** (still readable by old consumers
+   for replay), but not evolved further.
+10. After a defined grace period (typically one quarter), the `v1`
+    version of the subject is marked `deleted: true` in the
+    registry.

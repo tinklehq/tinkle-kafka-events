@@ -1,9 +1,24 @@
 version: v2
 modules:
   - path: proto
+    name: buf.build/tinklecorp/tinkle-kafka-events
 lint:
   use:
     - STANDARD
+  except:
+    - PACKAGE_DIRECTORY_MATCH
 breaking:
   use:
     - FILE
+  # The BSR's managed mode overrides the import path of the
+  # published Go SDK to buf.build/gen/go/... regardless of what
+  # the literal in `option go_package` says. Only the `;name`
+  # suffix (after the semicolon) is load-bearing for consumers,
+  # because the BSR uses it to derive the gRPC subpackage name
+  # (e.g. `eventsbotv1` -> `eventsbotv1grpc`). The FILE_SAME_GO_PACKAGE
+  # rule fires on any change to the full `go_package` value and
+  # is too strict for BSR-published modules; the `;name` part is
+  # protected by code review (see AGENTS.md rule 1) and the
+  # buf-ci PR summary comment.
+  except:
+    - FILE_SAME_GO_PACKAGE

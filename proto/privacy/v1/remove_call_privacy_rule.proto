@@ -1,0 +1,19 @@
+// Published by privacy-service when a call privacy rule override is
+// deleted.
+// Event type discriminator: "remove_call_privacy_rule".
+// Topic: outbox.privacy.call. Aggregate: call.
+syntax = "proto3";
+
+package me.tinkle.events.privacy.v1;
+
+option go_package = "github.com/tinklehq/tinkle-kafka-events/proto/privacy/v1;eventsprivacyv1";
+option java_multiple_files = true;
+option java_package = "com.tinklehq.kafkaevents.me.tinkle.events.privacy.v1";
+
+message RemoveCallPrivacyRuleEvent {
+  // Snowflake ID of the rule owner.
+  int64 user_id = 1;
+
+  // Snowflake ID of the rule target being removed.
+  int64 target_user_id = 2;
+}

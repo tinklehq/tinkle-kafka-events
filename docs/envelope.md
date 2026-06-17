@@ -5,7 +5,7 @@
 
 ## Definition
 
-`proto/me/tinkle/events/common/v1/envelope.proto`:
+`proto/common/v1/envelope.proto`:
 
 ```proto
 syntax = "proto3";

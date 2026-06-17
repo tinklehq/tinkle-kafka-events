@@ -1,0 +1,27 @@
+// Published by roster-service when a previously one-directional
+// contact relationship becomes mutual (both users have added each
+// other).
+// Event type discriminator: "roster_mutual_contact_established".
+// Topic: outbox.roster.event. Aggregate: event.
+syntax = "proto3";
+
+package me.tinkle.events.roster.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/tinklehq/tinkle-kafka-events/proto/roster/v1;eventsrosterv1";
+option java_multiple_files = true;
+option java_package = "com.tinklehq.kafkaevents.me.tinkle.events.roster.v1";
+
+message MutualContactEstablishedEvent {
+  // Snowflake ID of the roster owner (the user on whose behalf this
+  // event is emitted; both directions will fire one event each).
+  int64 owner_user_id = 1;
+
+  // Snowflake ID of the contact that is now mutual.
+  int64 contact_user_id = 2;
+
+  // Wall-clock instant at which the mutual relationship was
+  // established.
+  google.protobuf.Timestamp created_at = 3;
+}

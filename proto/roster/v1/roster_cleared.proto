@@ -1,0 +1,22 @@
+// Published by roster-service when an entire roster is cleared in a
+// single operation. Consumers should remove ALL contact references
+// for the owner.
+// Event type discriminator: "roster_cleared".
+// Topic: outbox.roster.event. Aggregate: event.
+syntax = "proto3";
+
+package me.tinkle.events.roster.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/tinklehq/tinkle-kafka-events/proto/roster/v1;eventsrosterv1";
+option java_multiple_files = true;
+option java_package = "com.tinklehq.kafkaevents.me.tinkle.events.roster.v1";
+
+message RosterClearedEvent {
+  // Snowflake ID of the roster owner whose roster was cleared.
+  int64 owner_user_id = 1;
+
+  // Wall-clock instant at which the roster was cleared.
+  google.protobuf.Timestamp created_at = 2;
+}

@@ -132,18 +132,23 @@ When a non-`BACKWARD_TRANSITIVE`-compatible change is unavoidable:
 
 ## CI enforcement
 
-The `.github/workflows/schema-compatibility.yml` workflow runs:
+The `.github/workflows/buf-ci.yaml` workflow uses
+`bufbuild/buf-action@v1` and runs:
 
-1. `buf lint proto` — catches style / API-CHECK issues via the
+1. `buf lint` — catches style / API-CHECK issues via the
    `STANDARD` lint category.
-2. `buf breaking --against '.git#branch=main' proto` — catches
+2. `buf breaking --against '.git#branch=origin/main'` — catches
    `FIELD_NO_DELETE_UNLESS_NUMBER_RESERVED`,
    `FIELD_SAME_TYPE`, `ENUM_VALUE_NO_DELETE`, etc., via the `FILE`
    breaking category.
-3. For each changed `.proto` file, `POST`s the `.proto` text to the
-   staging Confluent SR subject
-   `POST /subjects/<basename>/versions` with
-   `schemaType: PROTOBUF, compatibility: BACKWARD_TRANSITIVE`. A
-   `409 Conflict` response fails the PR.
+3. On merge to `main`, `buf push` publishes the named module to
+   `buf.build/tinklecorp/tinkle-kafka-events`.
 
-See `scripts/validate.sh` for a local equivalent.
+The CI does **not** register against the Confluent Schema Registry
+directly — the BSR is the source of truth, and the Confluent SR is
+synced from the BSR via the deploy pipeline. The wire format and
+the compatibility rules are identical to what the Confluent SR
+checker would enforce; the BSR is just the upstream registry.
+
+The same checks can be run locally with the `buf` CLI (see
+`AGENTS.md` → "Local validation").
