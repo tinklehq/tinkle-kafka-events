@@ -7,6 +7,7 @@ syntax = "proto3";
 
 package tinkle.events.user.v1;
 
+import "common/v1/user_status.proto";
 import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/tinklehq/tinkle-kafka-events/proto/user/v1;tinkleeventsuserv1";
@@ -25,4 +26,10 @@ message UserCreatedEvent {
   // without a phone number. Useful for downstream phone-based
   // lookups and for cross-referencing identity events.
   optional string phone_number = 3;
+
+  // Lifecycle status of the user at creation time. Always
+  // USER_STATUS_ACTIVE for a freshly created account, but emitted
+  // explicitly so consumers can drive status-aware projections
+  // from a single source of truth.
+  tinkle.events.common.v1.UserStatus status = 4;
 }
