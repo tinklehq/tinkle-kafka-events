@@ -1,0 +1,36 @@
+// Published by user-service when a user account's mutable profile
+// data is updated (phone number, lifecycle status, or any other
+// change surfaced as a status transition). Consumers should use this
+// to refresh status-aware projections and to invalidate any
+// phone-number-keyed caches.
+// Event type discriminator: "user_updated". Topic: outbox.user.event.
+// Aggregate: event.
+syntax = "proto3";
+
+package tinkle.events.user.v1;
+
+import "common/v1/user_status.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/tinklehq/tinkle-kafka-events/proto/user/v1;tinkleeventsuserv1";
+option java_multiple_files = true;
+option java_package = "me.tinkle.events.user.v1";
+
+message UserUpdatedEvent {
+  // Snowflake ID of the updated user.
+  int64 user_id = 1;
+
+  // Phone number in E.164 format (e.g. +14155552671) after the
+  // update. Empty string if the user has no phone number, or if
+  // the update did not touch the phone number and the prior value
+  // is unknown to the producer.
+  optional string phone_number = 2;
+
+  // Wall-clock instant at which the update was applied.
+  google.protobuf.Timestamp updated_at = 3;
+
+  // Lifecycle status of the user after the update. Emitted on every
+  // update so consumers do not need to correlate with a separate
+  // status-change event.
+  tinkle.events.common.v1.UserStatus status = 4;
+}

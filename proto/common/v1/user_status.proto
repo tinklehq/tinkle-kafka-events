@@ -1,0 +1,38 @@
+// Lifecycle status of a user account.
+//
+// Owned by the user-service event contract; lives under
+// proto/common/v1/ only so other packages can
+// reference it without a circular import. The package is
+// tinkle.events.common.v1 intentionally.
+syntax = "proto3";
+
+package tinkle.events.common.v1;
+
+option go_package = "github.com/tinklehq/tinkle-kafka-events/proto/common/v1;tinkleeventscommonv1";
+option java_multiple_files = true;
+option java_package = "me.tinkle.events.common.v1";
+
+enum UserStatus {
+  // Default zero value. Used when a user's status has not been
+  // initialised; consumers SHOULD treat this as "unknown" and avoid
+  // making routing decisions based on it.
+  USER_STATUS_UNSPECIFIED = 0;
+
+  // The user account is active and may use all product features.
+  USER_STATUS_ACTIVE = 1;
+
+  // The user account is temporarily suspended (e.g. for abuse
+  // review). Authentication is rejected, but the account and its
+  // data are retained.
+  USER_STATUS_SUSPENDED = 2;
+
+  // The user has closed their own account. The account is
+  // deactivated but its data is retained for legal/audit purposes;
+  // a future reactivation is possible.
+  USER_STATUS_CLOSED = 3;
+
+  // The user account has been deleted (hard delete). The underlying
+  // data is scheduled for removal; consumers SHOULD treat all
+  // references as gone.
+  USER_STATUS_DELETED = 4;
+}
